@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert, MenuItem, Box, Button } from "@mui/material";
+import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert, MenuItem, Box, Button, TablePagination } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useDispatch } from "react-redux";
 import { logout } from "../../redux/authSlice";
@@ -7,11 +7,30 @@ import { useGetAllDiamondsQuery } from "../../redux/api/diamondApi";
 import DiamondCSVUploadDialog from "./csv_create_diamond";
 
 const DiamondPage = () => {
-  const { data, error, isLoading, refetch } = useGetAllDiamondsQuery();
+  const dispatch = useDispatch();
 
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [openUpload, setOpenUpload] = React.useState(false);
 
-  const dispatch = useDispatch();
+  const { data, error, isLoading } = useGetAllDiamondsQuery();
+
+  const diamonds = Array.isArray(data) ? data : [];
+  const total = diamonds.length;
+
+  const paginatedDiamonds = diamonds.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
+  const handleChangePage = (_, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   const handleLogout = () => {
     dispatch(logout());
@@ -55,7 +74,7 @@ const DiamondPage = () => {
           </Button>
 
           <MenuItem
-            sx={{ fontWeight: "bold", color: "primary.main", cursor: "pointer" }}
+            sx={{ fontWeight: "bold", color: "primary.main" }}
             onClick={handleLogout}
           >
             <LogoutIcon sx={{ mr: 1 }} />
@@ -64,52 +83,72 @@ const DiamondPage = () => {
         </Box>
       </Box>
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead sx={{ backgroundColor: "#f0f0f0" }}>
-            <TableRow>
-              <TableCell><b>Certificate No</b></TableCell>
-              <TableCell><b>Image</b></TableCell>
-              <TableCell><b>Lab</b></TableCell>
-              <TableCell><b>Type</b></TableCell>
-              <TableCell><b>Carat</b></TableCell>
-              <TableCell><b>Color</b></TableCell>
-              <TableCell><b>Clarity</b></TableCell>
-              <TableCell><b>Shape</b></TableCell>
-              <TableCell><b>Selling Price</b></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data?.map((diamond) => (
-              <TableRow key={diamond.id}>
-                <TableCell>{diamond.certificate_no}</TableCell>
-                <TableCell>
-                  <img
-                    src={diamond.image_source}
-                    alt={diamond.certificate_no}
-                    width={50}
-                    height={50}
-                    style={{ borderRadius: "50%" }}
-                  />
-                </TableCell>
-                <TableCell>{diamond.lab}</TableCell>
-                <TableCell>{diamond.type}</TableCell>
-                <TableCell>{diamond.carat}</TableCell>
-                <TableCell>{diamond.color}</TableCell>
-                <TableCell>{diamond.clarity}</TableCell>
-                <TableCell>{diamond.shape}</TableCell>
-                <TableCell>{diamond.selling_price}</TableCell>
+      <Paper>
+        <TableContainer>
+          <Table>
+            <TableHead sx={{ backgroundColor: "#f0f0f0" }}>
+              <TableRow>
+                <TableCell><b>Certificate No</b></TableCell>
+                <TableCell><b>Image</b></TableCell>
+                <TableCell><b>Lab</b></TableCell>
+                <TableCell><b>Type</b></TableCell>
+                <TableCell><b>Carat</b></TableCell>
+                <TableCell><b>Color</b></TableCell>
+                <TableCell><b>Clarity</b></TableCell>
+                <TableCell><b>Shape</b></TableCell>
+                <TableCell><b>Selling Price</b></TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {paginatedDiamonds.map((diamond) => (
+                <TableRow key={diamond.id}>
+                  <TableCell>{diamond.certificate_no}</TableCell>
+                  <TableCell>
+                    <img
+                      src={diamond.image_source}
+                      alt={diamond.certificate_no}
+                      width={50}
+                      height={50}
+                      style={{ borderRadius: "50%" }}
+                    />
+                  </TableCell>
+                  <TableCell>{diamond.lab}</TableCell>
+                  <TableCell>{diamond.type}</TableCell>
+                  <TableCell>{diamond.carat}</TableCell>
+                  <TableCell>{diamond.color}</TableCell>
+                  <TableCell>{diamond.clarity}</TableCell>
+                  <TableCell>{diamond.shape}</TableCell>
+                  <TableCell>{diamond.selling_price}</TableCell>
+                </TableRow>
+              ))}
+
+              {paginatedDiamonds.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={9} align="center">
+                    No data found
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <TablePagination
+          component="div"
+          count={total}
+          page={page}
+          onPageChange={handleChangePage}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          rowsPerPageOptions={[10, 20, 50, 100]}
+        />
+      </Paper>
 
       <DiamondCSVUploadDialog
         open={openUpload}
         onClose={(success) => {
           setOpenUpload(false);
-          if (success) refetch();
+          if (success) {setPage(0);}
         }}
       />
     </Container>
