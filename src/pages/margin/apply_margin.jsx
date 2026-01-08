@@ -1,0 +1,218 @@
+import React, { useState } from "react";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, TextField, Select, MenuItem, FormControl, InputLabel, Table, TableBody, TableCell, TableHead, TableRow, IconButton, Typography} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import { useCreateMarginMutation } from "../../redux/api/marginApi";
+
+const MarginDialog = ({ open, onclose, onSuccess }) => {
+    const [createMargin, { isLoading }] = useCreateMarginMutation();
+
+    const [stoneType, setStoneType] = useState("lab");
+    const [unit, setUnit] = useState("carat");
+    const [shopifyName, setShopifyName] = useState("");
+    const [rows, setRows] = useState([{ start: "", end: "", margin: "" }]);
+    const [submitted, setSubmitted] = useState(false);
+
+    const handleSubmit = async () => {
+        setSubmitted(true);
+
+        // Shopify Name validation
+        if (!shopifyName.trim()) return;
+
+        const validRows = rows.filter(
+            (r) => r.start !== "" && r.end !== "" && r.margin !== ""
+        );
+
+        if (!validRows.length) {
+            alert("Please add at least one valid range.");
+            return;
+        }
+
+        try {
+            await Promise.all(
+                validRows.map((row) =>
+                    createMargin({
+                        type: stoneType,
+                        unit,
+                        shopify_name: shopifyName.trim(),
+                        start: Number(row.start),
+                        end: Number(row.end),
+                        margin: Number(row.margin),
+                    }).unwrap()
+                )
+            );
+
+            alert("Margin applied successfully!");
+            setSubmitted(false);
+            onSuccess();
+
+        } catch (err) {
+            alert(err?.data?.detail || "Failed to apply margin");
+        }
+    };
+
+    return (
+        <Dialog open={open} onClose={onclose} maxWidth="md" fullWidth>
+            <DialogTitle>Apply Stone Margin</DialogTitle>
+
+            <DialogContent>
+                {/* ===== TOP FORM ===== */}
+                <Box
+                    sx={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr 1fr 1.3fr",
+                        gap: 2,
+                        mb: 3,
+                        alignItems: "center",
+                    }}
+                >
+                    {/* Stone Type */}
+                    <FormControl fullWidth size="small"  margin="dense">
+                        <InputLabel>Stone Type</InputLabel>
+                        <Select
+                            value={stoneType}
+                            label="Stone Type"
+                            onChange={(e) => setStoneType(e.target.value)}
+                        >
+                            <MenuItem value="lab">Lab</MenuItem>
+                            <MenuItem value="natural">Natural</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    {/* Margin Based On */}
+                    <FormControl fullWidth size="small">
+                        <InputLabel>Margin Based On</InputLabel>
+                        <Select
+                            value={unit}
+                            label="Margin Based On"
+                            onChange={(e) => setUnit(e.target.value)}
+                        >
+                            <MenuItem value="carat">Carat</MenuItem>
+                            <MenuItem value="price">Price</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    {/* Shopify Name */}
+                    <TextField
+                        fullWidth
+                        size="small"
+                        label="Shopify Name"
+                        value={shopifyName}
+                        onChange={(e) => setShopifyName(e.target.value)}
+                        error={submitted && !shopifyName.trim()}
+                        helperText={
+                            submitted && !shopifyName.trim()
+                                ? "Shopify Name is required"
+                                : undefined
+                        }
+                        FormHelperTextProps={{
+                            sx: {
+                                margin: 0,
+                                minHeight: 0,
+                            },
+                        }}
+                    />
+                </Box>
+
+                {/* ===== RANGES ===== */}
+                <Typography fontWeight="bold" mb={1}>
+                    Define Ranges
+                </Typography>
+
+                <Table size="small">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Start</TableCell>
+                            <TableCell>End</TableCell>
+                            <TableCell>Margin (%)</TableCell>
+                            <TableCell width={40} />
+                        </TableRow>
+                    </TableHead>
+
+                    <TableBody>
+                        {rows.map((row, i) => (
+                            <TableRow key={i}>
+                                <TableCell>
+                                    <TextField
+                                        size="small"
+                                        fullWidth
+                                        type="number"
+                                        value={row.start}
+                                        onChange={(e) => {
+                                            const r = [...rows];
+                                            r[i].start = e.target.value;
+                                            setRows(r);
+                                        }}
+                                    />
+                                </TableCell>
+
+                                <TableCell>
+                                    <TextField
+                                        size="small"
+                                        fullWidth
+                                        type="number"
+                                        value={row.end}
+                                        onChange={(e) => {
+                                            const r = [...rows];
+                                            r[i].end = e.target.value;
+                                            setRows(r);
+                                        }}
+                                    />
+                                </TableCell>
+
+                                <TableCell>
+                                    <TextField
+                                        size="small"
+                                        fullWidth
+                                        type="number"
+                                        value={row.margin}
+                                        onChange={(e) => {
+                                            const r = [...rows];
+                                            r[i].margin = e.target.value;
+                                            setRows(r);
+                                        }}
+                                    />
+                                </TableCell>
+
+                                <TableCell>
+                                    <IconButton
+                                        disabled={rows.length === 1}
+                                        onClick={() =>
+                                            setRows(rows.filter((_, x) => x !== i))
+                                        }
+                                    >
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+
+                <Button
+                    startIcon={<AddIcon />}
+                    sx={{ mt: 1 }}
+                    onClick={() =>
+                        setRows([...rows, { start: "", end: "", margin: "" }])
+                    }
+                >
+                    Add Range
+                </Button>
+            </DialogContent>
+
+            {/* ===== ACTIONS ===== */}
+            <DialogActions>
+                <Button onClick={onclose}>Cancel</Button>
+                <Button
+                    variant="contained"
+                    onClick={handleSubmit}
+                    disabled={isLoading}
+                >
+                    Apply Margin
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+};
+
+export default MarginDialog;

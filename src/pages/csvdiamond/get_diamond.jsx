@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { logout } from "../../redux/authSlice";
 import { useGetAllDiamondsQuery, useGetDiamondFiltersQuery,} from "../../redux/api/diamondApi";
 import DiamondCSVUploadDialog from "./csv_create_diamond";
+import MarginDialog from "../margin/apply_margin";
 
 const INITIAL_FILTERS = {
   stone_type: "",
@@ -21,6 +22,7 @@ const DiamondPage = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [openUpload, setOpenUpload] = React.useState(false);
+  const [openMargin, setOpenMargin] = React.useState(false);
 
   /* ---------- FILTER OPTIONS API ---------- */
   const { data: filterRes } = useGetDiamondFiltersQuery(
@@ -40,7 +42,7 @@ const DiamondPage = () => {
   }, [filters]);
 
   /* ---------- DIAMONDS API ---------- */
-  const { data, error, isLoading } = useGetAllDiamondsQuery(queryParams);
+  const { data, error, isLoading, refetch } = useGetAllDiamondsQuery(queryParams);
 
   const diamonds = Array.isArray(data) ? data : [];
   const total = diamonds.length;
@@ -103,6 +105,13 @@ const DiamondPage = () => {
         </Typography>
 
         <Box>
+          <Button
+            variant="contained"
+            sx={{ mr: 2 }}
+            onClick={() => setOpenMargin(true)}
+          >
+            Margin
+          </Button>
           <Button
             variant="contained"
             sx={{ mr: 2 }}
@@ -270,6 +279,16 @@ const DiamondPage = () => {
       <DiamondCSVUploadDialog
         open={openUpload}
         onClose={() => setOpenUpload(false)}
+      />
+
+      {/* ================= Margin apply ================= */}
+      <MarginDialog
+        open={openMargin}
+        onclose={() => setOpenMargin(false)}
+        onSuccess={() => {
+          setOpenMargin(false);
+          refetch();
+        }}
       />
     </Container>
   );
