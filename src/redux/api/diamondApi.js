@@ -23,13 +23,27 @@ export const diamondApi = createApi({
     }),
 
     getAllDiamonds: builder.query({
-      query: () => "/diamonds/all-diamonds",
+      query: (params = {}) => ({
+        url: "/diamonds/all-diamonds",
+        params,
+      }),
       providesTags: ["Diamonds"],
     }),
+
+    getDiamondFilters: builder.query({
+      query: ({ stone_type, shopify_name }) => ({
+        url: `/diamonds/filters`,
+        params: {
+          stone_type,
+          shopify_name,
+        },
+      }),
+    })
   }),
 });
 
 export const {
   useCreateFiamondsMutation,
-  useGetAllDiamondsQuery
+  useGetAllDiamondsQuery,
+  useGetDiamondFiltersQuery,
 } = diamondApi;

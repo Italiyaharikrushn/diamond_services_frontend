@@ -101,9 +101,6 @@ const DiamondCSVUploadDialog = ({ open, onClose }) => {
           </Typography>
         </Box>
 
-        <Link href="/sample.csv" underline="hover" sx={{ mt: 2, display: "block" }}>
-          Download sample CSV
-        </Link>
       </DialogContent>
 
       <DialogActions>
@@ -113,7 +110,7 @@ const DiamondCSVUploadDialog = ({ open, onClose }) => {
           onClick={handleUpload}
           disabled={isLoading}
         >
-          {isLoading ? "Uploading..." : "Upload"}
+          {isLoading ? "Uploading..." : "Import"}
         </Button>
       </DialogActions>
     </Dialog>

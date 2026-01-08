@@ -1,35 +1,63 @@
 import React from "react";
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert, MenuItem, Box, Button, TablePagination } from "@mui/material";
+import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert, MenuItem, Box, Button, TablePagination, FormControl, InputLabel, Select } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useDispatch } from "react-redux";
 import { logout } from "../../redux/authSlice";
-import { useGetAllDiamondsQuery } from "../../redux/api/diamondApi";
+import { useGetAllDiamondsQuery, useGetDiamondFiltersQuery,} from "../../redux/api/diamondApi";
 import DiamondCSVUploadDialog from "./csv_create_diamond";
+
+const INITIAL_FILTERS = {
+  stone_type: "",
+  color: "",
+  clarity: "",
+};
+
 
 const DiamondPage = () => {
   const dispatch = useDispatch();
 
+  /* ---------- STATE ---------- */
+  const [filters, setFilters] = React.useState(INITIAL_FILTERS);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [openUpload, setOpenUpload] = React.useState(false);
 
-  const { data, error, isLoading } = useGetAllDiamondsQuery();
+  /* ---------- FILTER OPTIONS API ---------- */
+  const { data: filterRes } = useGetDiamondFiltersQuery(
+    {
+      stone_type: filters.stone_type || undefined,
+    },
+    { refetchOnMountOrArgChange: false }
+  );
+
+  /* ---------- BUILD QUERY PARAMS ---------- */
+  const queryParams = React.useMemo(() => {
+    const params = {};
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) params[key] = value;
+    });
+    return params;
+  }, [filters]);
+
+  /* ---------- DIAMONDS API ---------- */
+  const { data, error, isLoading } = useGetAllDiamondsQuery(queryParams);
 
   const diamonds = Array.isArray(data) ? data : [];
   const total = diamonds.length;
 
+  /* ---------- PAGINATION ---------- */
   const paginatedDiamonds = diamonds.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
 
-  const handleChangePage = (_, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+  React.useEffect(() => {
     setPage(0);
+  }, [filters]);
+
+  /* ---------- HANDLERS ---------- */
+  const handleResetFilters = () => {
+    setFilters(INITIAL_FILTERS);
   };
 
   const handleLogout = () => {
@@ -38,6 +66,7 @@ const DiamondPage = () => {
     window.location.href = "/";
   };
 
+  /* ---------- LOADING / ERROR ---------- */
   if (isLoading) {
     return (
       <Container sx={{ mt: 4, textAlign: "center" }}>
@@ -57,9 +86,18 @@ const DiamondPage = () => {
     );
   }
 
+  /* ================= UI ================= */
   return (
-    <Container sx={{ mt: 4 }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
+    <Container maxWidth="xl" sx={{ mb: 4 }}>
+      {/* ================= HEADER ================= */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
         <Typography variant="h4" color="primary">
           All Diamonds
         </Typography>
@@ -72,63 +110,144 @@ const DiamondPage = () => {
           >
             Import CSV
           </Button>
-
-          <MenuItem
-            sx={{ fontWeight: "bold", color: "primary.main" }}
+          <Button
+            color="error"
+            startIcon={<LogoutIcon />}
             onClick={handleLogout}
           >
-            <LogoutIcon sx={{ mr: 1 }} />
             Logout
-          </MenuItem>
+          </Button>
         </Box>
       </Box>
 
-      <Paper>
+      {/* ================= FILTER BAR ================= */}
+      <Paper sx={{ p: 2, mb: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+            flexWrap: "wrap",
+            alignItems: "center",
+          }}
+        >
+          {/* Stone Type */}
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <InputLabel>Stone Type</InputLabel>
+            <Select
+              value={filters.stone_type}
+              label="Stone Type"
+              onChange={(e) =>
+                setFilters((p) => ({ ...p, stone_type: e.target.value }))
+              }
+            >
+              <MenuItem value="">All</MenuItem>
+              <MenuItem value="natural">Natural</MenuItem>
+              <MenuItem value="lab">Lab</MenuItem>
+            </Select>
+          </FormControl>
+
+          {/* Color */}
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <InputLabel>Color</InputLabel>
+            <Select
+              value={filters.color}
+              label="Color"
+              onChange={(e) =>
+                setFilters((p) => ({ ...p, color: e.target.value }))
+              }
+            >
+              <MenuItem value="">All</MenuItem>
+              {filterRes?.data?.colors?.map((c) => (
+                <MenuItem key={c} value={c}>
+                  {c}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          {/* Clarity */}
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <InputLabel>Clarity</InputLabel>
+            <Select
+              value={filters.clarity}
+              label="Clarity"
+              onChange={(e) =>
+                setFilters((p) => ({ ...p, clarity: e.target.value }))
+              }
+            >
+              <MenuItem value="">All</MenuItem>
+              {filterRes?.data?.clarities?.map((c) => (
+                <MenuItem key={c} value={c}>
+                  {c}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          {/* Reset */}
+          <Button
+            variant="outlined"
+            size="small"
+            sx={{ height: 40 }}
+            disabled={
+              JSON.stringify(filters) === JSON.stringify(INITIAL_FILTERS)
+            }
+            onClick={handleResetFilters}
+          >
+            Reset
+          </Button>
+        </Box>
+      </Paper>
+
+      {/* ================= TABLE ================= */}
+      <Paper sx={{ borderRadius: 2, overflow: "hidden" }}>
         <TableContainer>
           <Table>
-            <TableHead sx={{ backgroundColor: "#f0f0f0" }}>
-              <TableRow>
-                <TableCell><b>Certificate No</b></TableCell>
-                <TableCell><b>Image</b></TableCell>
-                <TableCell><b>Lab</b></TableCell>
-                <TableCell><b>Type</b></TableCell>
-                <TableCell><b>Carat</b></TableCell>
-                <TableCell><b>Color</b></TableCell>
-                <TableCell><b>Clarity</b></TableCell>
-                <TableCell><b>Shape</b></TableCell>
-                <TableCell><b>Selling Price</b></TableCell>
+            <TableHead>
+              <TableRow
+                sx={{
+                  "& th": {
+                    fontSize: 12,
+                    fontWeight: 600,
+                    letterSpacing: 1,
+                  },
+                }}
+              >
+                <TableCell><b>STONE</b></TableCell>
+                <TableCell><b>ORIGIN</b></TableCell>
+                <TableCell><b>SHAPE</b></TableCell>
+                <TableCell><b>CARAT</b></TableCell>
+                <TableCell><b>COLOR</b></TableCell>
+                <TableCell><b>CLARITY</b></TableCell>
+                <TableCell><b>PRICE</b></TableCell>
+                <TableCell><b>SELLING</b></TableCell>
+                <TableCell><b>TYPE</b></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {paginatedDiamonds.map((diamond) => (
-                <TableRow key={diamond.id}>
-                  <TableCell>{diamond.certificate_no}</TableCell>
+              {paginatedDiamonds.map((d) => (
+                <TableRow key={d.id} hover>
                   <TableCell>
-                    <img
-                      src={diamond.image_source}
-                      alt={diamond.certificate_no}
-                      width={50}
-                      height={50}
-                      style={{ borderRadius: "50%" }}
-                    />
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Box
+                        component="img"
+                        src={d.image_source}
+                        alt={d.certificate_no}
+                        sx={{ width: 36, height: 36, borderRadius: "20%" }}
+                      />
+                      {d.certificate_no}
+                    </Box>
                   </TableCell>
-                  <TableCell>{diamond.lab}</TableCell>
-                  <TableCell>{diamond.type}</TableCell>
-                  <TableCell>{diamond.carat}</TableCell>
-                  <TableCell>{diamond.color}</TableCell>
-                  <TableCell>{diamond.clarity}</TableCell>
-                  <TableCell>{diamond.shape}</TableCell>
-                  <TableCell>{diamond.selling_price}</TableCell>
+                  <TableCell>{d.origin}</TableCell>
+                  <TableCell>{d.shape}</TableCell>
+                  <TableCell>{d.carat}</TableCell>
+                  <TableCell>{d.color}</TableCell>
+                  <TableCell>{d.clarity}</TableCell>
+                  <TableCell>{d.price}</TableCell>
+                  <TableCell>{d.selling_price}</TableCell>
+                  <TableCell>{d.type}</TableCell>
                 </TableRow>
               ))}
-
-              {paginatedDiamonds.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={9} align="center">
-                    No data found
-                  </TableCell>
-                </TableRow>
-              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -137,19 +256,20 @@ const DiamondPage = () => {
           component="div"
           count={total}
           page={page}
-          onPageChange={handleChangePage}
+          onPageChange={(_, p) => setPage(p)}
           rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+          onRowsPerPageChange={(e) => {
+            setRowsPerPage(parseInt(e.target.value, 10));
+            setPage(0);
+          }}
           rowsPerPageOptions={[10, 20, 50, 100]}
         />
       </Paper>
 
+      {/* ================= CSV UPLOAD ================= */}
       <DiamondCSVUploadDialog
         open={openUpload}
-        onClose={(success) => {
-          setOpenUpload(false);
-          if (success) {setPage(0);}
-        }}
+        onClose={() => setOpenUpload(false)}
       />
     </Container>
   );
