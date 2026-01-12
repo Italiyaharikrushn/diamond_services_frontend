@@ -19,32 +19,39 @@ const MarginDialog = ({ open, onclose, onSuccess }) => {
         // Shopify Name validation
         if (!shopifyName.trim()) return;
 
-        const validRows = rows.filter(
-            (r) => r.start !== "" && r.end !== "" && r.margin !== ""
-        );
+        const validRanges = rows
+            .filter(r => r.start !== "" && r.end !== "" && r.margin !== "")
+            .map(r => ({
+                start: Number(r.start),
+                end: Number(r.end),
+                margin: Number(r.margin)
+            }));
 
-        if (!validRows.length) {
-            alert("Please add at least one valid range.");
+        if (validRanges.length === 0) {
+            alert("Please add at least one complete range.");
+            return;
+        }
+
+        if (validRanges.some(r => r.start >= r.end)) {
+            alert("End value must be greater than Start value in all ranges.");
             return;
         }
 
         try {
-            await Promise.all(
-                validRows.map((row) =>
-                    createMargin({
-                        type: stoneType,
-                        unit,
-                        shopify_name: shopifyName.trim(),
-                        start: Number(row.start),
-                        end: Number(row.end),
-                        margin: Number(row.margin),
-                    }).unwrap()
-                )
-            );
+            await createMargin({
+                shopify_name: shopifyName.trim(),
+                type: stoneType,
+                unit: unit,
+                ranges: validRanges
+            }).unwrap();
 
-            alert("Margin applied successfully!");
+            alert("Margins applied and prices updated successfully!");
+
+            setRows([{ start: "", end: "", margin: "" }]);
+            setShopifyName("");
             setSubmitted(false);
             onSuccess();
+            onclose();
 
         } catch (err) {
             alert(err?.data?.detail || "Failed to apply margin");
