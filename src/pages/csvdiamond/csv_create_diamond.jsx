@@ -1,27 +1,43 @@
 import React, { useState } from "react";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Box,
-  Typography,
-  Link
+  Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, Typography, Snackbar, Alert, LinearProgress
 } from "@mui/material";
 import { useCreateFiamondsMutation } from "../../redux/api/diamondApi";
 
 const DiamondCSVUploadDialog = ({ open, onClose }) => {
   const [file, setFile] = useState(null);
   const [createFiamonds, { isLoading }] = useCreateFiamondsMutation();
+  // Notification state
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "info", // success, error, warning, info
+  });
+
+  const handleCloseNotification = () => {
+    setNotification({ ...notification, open: false });
+  };
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+    const selectedFile = e.target.files[0];
+    if (selectedFile && selectedFile.type !== "text/csv") {
+      setNotification({
+        open: true,
+        message: "Only CSV files are allowed",
+        severity: "warning",
+      });
+      return;
+    }
+    setFile(selectedFile);
   };
 
   const handleUpload = async () => {
     if (!file) {
-      alert("Please select CSV file");
+      setNotification({
+        open: true,
+        message: "Please select a CSV file first",
+        severity: "warning",
+      });
       return;
     }
 
@@ -33,7 +49,11 @@ const DiamondCSVUploadDialog = ({ open, onClose }) => {
       try {
         const res = await createFiamonds({ csv_data: csvText }).unwrap();
 
-        alert(res.message);
+        setNotification({
+          open: true,
+          message: res.message || "Operation successful",
+          severity: res.message === "Already exists" ? "info" : "success",
+        });
 
         if (
           res.message === "Already exists" ||
@@ -42,12 +62,16 @@ const DiamondCSVUploadDialog = ({ open, onClose }) => {
           setFile(null);
         }
 
-        if (res.message === "CSV uploaded successfully") {
-          onClose(true);
+        if (res.message === "Already exists" || "CSV uploaded successfully") {
+          setTimeout(() => onClose(true), 1500);
         }
 
       } catch (err) {
-        alert("Upload failed");
+        setNotification({
+          open: true,
+          message: err?.data?.detail || "Upload failed. Please try again.",
+          severity: "error",
+        });
         setFile(null);
       }
     };
@@ -55,65 +79,95 @@ const DiamondCSVUploadDialog = ({ open, onClose }) => {
     reader.readAsText(file);
   };
 
-
   return (
-    <Dialog open={open} onClose={() => onClose(false)} maxWidth="sm" fullWidth>
-      <DialogTitle>
-        Upload lab CSV
-      </DialogTitle>
+    <>
+      <Dialog open={open} onClose={() => onClose(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: "bold" }}>
+          Upload Lab CSV
+        </DialogTitle>
 
-      <DialogContent>
-        <Box
-          sx={{
-            border: "2px dashed #ccc",
-            borderRadius: 2,
-            textAlign: "center",
-            p: 4,
-            mt: 2,
-          }}
-        >
-          <Typography fontWeight="bold">
-            Accepts only CSV files
-          </Typography>
+        <DialogContent>
+          {/* Progress Bar જ્યારે અપલોડ ચાલુ હોય */}
+          {isLoading && <LinearProgress sx={{ mb: 2, borderRadius: 1 }} />}
 
-          <Button
-            variant="outlined"
-            component="label"
-            sx={{ mt: 2 }}
+          <Box
+            sx={{
+              border: "2px dashed",
+              borderColor: file ? "success.light" : "#ccc",
+              borderRadius: 2,
+              textAlign: "center",
+              p: 4,
+              mt: 1,
+              bgcolor: file ? "rgba(76, 175, 80, 0.04)" : "transparent",
+              transition: "0.3s",
+            }}
           >
-            Add files
-            <input
-              hidden
-              type="file"
-              accept=".csv"
-              onChange={handleFileChange}
-            />
-          </Button>
-
-          {file && (
-            <Typography mt={1} color="success.main">
-              {file.name}
+            <Typography variant="h6" color="textSecondary">
+              {file ? "File Selected!" : "Select your CSV file"}
             </Typography>
-          )}
 
-          <Typography mt={1} variant="body2">
-            Accepts .csv
-          </Typography>
-        </Box>
+            <Button
+              variant="contained"
+              component="label"
+              sx={{ mt: 2, boxShadow: 'none' }}
+              disabled={isLoading}
+            >
+              Add File
+              <input
+                hidden
+                type="file"
+                accept=".csv"
+                onChange={handleFileChange}
+              />
+            </Button>
 
-      </DialogContent>
+            {file && (
+              <Typography mt={2} color="success.main" fontWeight="500">
+                📄 {file.name}
+              </Typography>
+            )}
 
-      <DialogActions>
-        <Button onClick={() => onClose(false)}>Cancel</Button>
-        <Button
-          variant="contained"
-          onClick={handleUpload}
-          disabled={isLoading}
+            {!file && (
+              <Typography mt={2} variant="body2" color="textSecondary">
+                Accepts only .csv files
+              </Typography>
+            )}
+          </Box>
+
+        </DialogContent>
+
+        <DialogActions sx={{ p: 2, px: 3 }}>
+          <Button onClick={() => onClose(false)} color="inherit">
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleUpload}
+            disabled={isLoading || !file}
+            sx={{ minWidth: 100 }}
+          >
+            {isLoading ? "Uploading..." : "Import"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar for Notifications */}
+      <Snackbar
+        open={notification.open}
+        autoHideDuration={4000}
+        onClose={handleCloseNotification}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleCloseNotification}
+          severity={notification.severity}
+          variant="filled"
+          sx={{ width: "100%" }}
         >
-          {isLoading ? "Uploading..." : "Import"}
-        </Button>
-      </DialogActions>
-    </Dialog>
+          {notification.message}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 

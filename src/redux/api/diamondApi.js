@@ -16,9 +16,9 @@ export const diamondApi = createApi({
   endpoints: (builder) => ({
     createFiamonds: builder.mutation({
       query: (useData) => ({
-       url: "/diamonds/csv/upload",
-       method: 'POST',
-       body: useData,
+        url: "/diamonds/csv/upload",
+        method: 'POST',
+        body: useData,
       }),
     }),
 
@@ -38,7 +38,25 @@ export const diamondApi = createApi({
           shopify_name,
         },
       }),
-    })
+    }),
+
+    bulkDeleteDiamonds: builder.mutation({
+      query: ({ ids, shopify_name }) => ({
+        url: "/diamonds/bulk-delete",
+        method: "DELETE",
+        params: { shopify_name },
+        body: { ids },
+      }),
+    }),
+
+
+    deleteAllDiamonds: builder.mutation({
+      query: ({ shopify_app }) => ({
+        url: "/diamonds/all-delete",
+        method: "DELETE",
+        params: { shopify_app },
+      }),
+    }),
   }),
 });
 
@@ -46,4 +64,7 @@ export const {
   useCreateFiamondsMutation,
   useGetAllDiamondsQuery,
   useGetDiamondFiltersQuery,
+  useBulkDeleteDiamondsMutation,
+  useDeleteAllDiamondsMutation,
+
 } = diamondApi;

@@ -121,11 +121,6 @@ const MarginDialog = ({ open, onclose, onSuccess }) => {
                     />
                 </Box>
 
-                {/* ===== RANGES ===== */}
-                <Typography fontWeight="bold" mb={1}>
-                    Define Ranges
-                </Typography>
-
                 <Table size="small">
                     <TableHead>
                         <TableRow>
