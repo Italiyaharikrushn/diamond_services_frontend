@@ -9,15 +9,11 @@ const MarginDialog = ({ open, onclose, onSuccess }) => {
 
     const [stoneType, setStoneType] = useState("lab");
     const [unit, setUnit] = useState("carat");
-    const [shopifyName, setShopifyName] = useState("");
     const [rows, setRows] = useState([{ start: "", end: "", margin: "" }]);
     const [submitted, setSubmitted] = useState(false);
 
     const handleSubmit = async () => {
         setSubmitted(true);
-
-        // Shopify Name validation
-        if (!shopifyName.trim()) return;
 
         const validRanges = rows
             .filter(r => r.start !== "" && r.end !== "" && r.margin !== "")
@@ -39,7 +35,6 @@ const MarginDialog = ({ open, onclose, onSuccess }) => {
 
         try {
             await createMargin({
-                shopify_name: shopifyName.trim(),
                 type: stoneType,
                 unit: unit,
                 ranges: validRanges
@@ -48,7 +43,6 @@ const MarginDialog = ({ open, onclose, onSuccess }) => {
             alert("Margins applied and prices updated successfully!");
 
             setRows([{ start: "", end: "", margin: "" }]);
-            setShopifyName("");
             setSubmitted(false);
             onSuccess();
             onclose();
@@ -99,26 +93,6 @@ const MarginDialog = ({ open, onclose, onSuccess }) => {
                         </Select>
                     </FormControl>
 
-                    {/* Shopify Name */}
-                    <TextField
-                        fullWidth
-                        size="small"
-                        label="Shopify Name"
-                        value={shopifyName}
-                        onChange={(e) => setShopifyName(e.target.value)}
-                        error={submitted && !shopifyName.trim()}
-                        helperText={
-                            submitted && !shopifyName.trim()
-                                ? "Shopify Name is required"
-                                : undefined
-                        }
-                        FormHelperTextProps={{
-                            sx: {
-                                margin: 0,
-                                minHeight: 0,
-                            },
-                        }}
-                    />
                 </Box>
 
                 <Table size="small">

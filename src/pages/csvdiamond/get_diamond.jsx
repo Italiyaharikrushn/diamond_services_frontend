@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, MenuItem, Box, Button, TablePagination, FormControl, InputLabel, Select, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert } from "@mui/material";
+import React, { useState, useMemo } from "react";
+import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, MenuItem, Box, Button, TablePagination, FormControl, Select, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import LogoutIcon from "@mui/icons-material/Logout";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -59,7 +59,6 @@ const DiamondPage = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      // લિસ્ટમાં રહેલા પહેલા ડાયમંડમાંથી shopify_name મેળવો
       const shopify_name = diamonds[0]?.shopify_name;
 
       if (!shopify_name) {
@@ -81,7 +80,7 @@ const DiamondPage = () => {
       if (res.success) {
         setSnackbar({ open: true, message: `Successfully deleted ${res.deleted_count} diamonds`, severity: "success" });
         setSelectedIds([]);
-        refetch(); // ડેટા રિફ્રેશ કરો
+        refetch();
       } else {
         throw new Error(res.error || "Delete failed");
       }
@@ -99,7 +98,7 @@ const DiamondPage = () => {
       {/* HEADER - CLEAN LOOK */}
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3, mt: 4, alignItems: "center" }}>
         <Typography variant="h4" sx={{ fontWeight: 800, fontSize: "2rem" }}>All Diamonds</Typography>
-        <Button color="error" startIcon={<LogoutIcon />} onClick={() => dispatch(logout())} sx={{ fontWeight: 600 }}>
+        <Button color="error" startIcon={<LogoutIcon />} onClick={() =>{dispatch(logout()); window.location.href = "/login";}} sx={{ fontWeight: 600 }}>
           LOGOUT
         </Button>
       </Box>
