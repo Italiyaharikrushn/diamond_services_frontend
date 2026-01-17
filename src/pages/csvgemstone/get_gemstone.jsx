@@ -109,18 +109,15 @@ const GemstonePage = ({ category }) => {
         <Button variant="contained" onClick={() => setOpenUpload(true)} sx={{ bgcolor: '#1976d2', boxShadow: 'none' }}>IMPORT CSV</Button>
       </Box>
 
-      {/* CONDITIONAL RENDERING: ડેટા છે કે નહીં તેની તપાસ */}
       {isLoading ? (
         <Box sx={{ textAlign: 'center', py: 5 }}><Typography>Loading...</Typography></Box>
       ) : gemstones.length === 0 ? (
-        /* જો ડેટા ના મળે તો આ સેક્શન દેખાશે */
         <Paper sx={{ p: 10, textAlign: 'center', bgcolor: '#f9f9f9', borderRadius: "8px", border: '1px solid #eee' }}>
           <Typography variant="h5" color="textSecondary" sx={{ fontWeight: 600 }}>
             Data Not Found for {category.toUpperCase()}
           </Typography>
         </Paper>
       ) : (
-        /* જો ડેટા હોય તો જ ટેબલ દેખાશે */
         <Paper sx={{ borderRadius: "8px", border: '1px solid #eee', boxShadow: 'none', overflow: 'hidden' }}>
           <TableContainer>
             <Table size="small">
@@ -175,7 +172,7 @@ const GemstonePage = ({ category }) => {
         <Alert severity={snackbar.severity} variant="filled">{snackbar.message}</Alert>
       </Snackbar>
       <GemstoneCSVUploadDialog open={openUpload} onClose={() => setOpenUpload(false)} shopifyName={gemstones[0]?.shopify_name} />
-      <MarginDialog open={openMargin} onclose={() => setOpenMargin(false)} onSuccess={() => refetch()} />
+      <MarginDialog open={openMargin} onclose={() => setOpenMargin(false)} onSuccess={() => refetch()} defaultType="gemstones" />
     </Container>
   );
 };

@@ -1,16 +1,22 @@
 import React, { useState } from "react";
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, TextField, Select, MenuItem, FormControl, InputLabel, Table, TableBody, TableCell, TableHead, TableRow, IconButton, Typography} from "@mui/material";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, TextField, Select, MenuItem, FormControl, InputLabel, Table, TableBody, TableCell, TableHead, TableRow, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { useCreateMarginMutation } from "../../redux/api/marginApi";
 
-const MarginDialog = ({ open, onclose, onSuccess }) => {
+const MarginDialog = ({ open, onclose, onSuccess, defaultType }) => {
     const [createMargin, { isLoading }] = useCreateMarginMutation();
 
-    const [stoneType, setStoneType] = useState("lab");
+    const [stoneType, setStoneType] = useState(defaultType || "lab");
     const [unit, setUnit] = useState("carat");
     const [rows, setRows] = useState([{ start: "", end: "", margin: "" }]);
     const [submitted, setSubmitted] = useState(false);
+
+    React.useEffect(() => {
+        if (open) {
+            setStoneType(defaultType || "lab");
+        }
+    }, [open, defaultType]);
 
     const handleSubmit = async () => {
         setSubmitted(true);
@@ -54,31 +60,32 @@ const MarginDialog = ({ open, onclose, onSuccess }) => {
 
     return (
         <Dialog open={open} onClose={onclose} maxWidth="md" fullWidth>
-            <DialogTitle>Apply Stone Margin</DialogTitle>
+            <DialogTitle>Apply {stoneType.toUpperCase()} Margin</DialogTitle>
 
             <DialogContent>
-                {/* ===== TOP FORM ===== */}
-                <Box
-                    sx={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr 1fr 1.3fr",
-                        gap: 2,
-                        mb: 3,
-                        alignItems: "center",
-                    }}
-                >
+                <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, mb: 3, mt: 1 }}>
                     {/* Stone Type */}
-                    <FormControl fullWidth size="small"  margin="dense">
-                        <InputLabel>Stone Type</InputLabel>
-                        <Select
-                            value={stoneType}
+                    {defaultType !== "gemstones" ? (
+                        <FormControl fullWidth size="small">
+                            <InputLabel>Stone Type</InputLabel>
+                            <Select
+                                value={stoneType}
+                                label="Stone Type"
+                                onChange={(e) => setStoneType(e.target.value)}
+                            >
+                                <MenuItem value="lab">Lab Grown</MenuItem>
+                                <MenuItem value="natural">Natural</MenuItem>
+                            </Select>
+                        </FormControl>
+                    ) : (
+                        <TextField
                             label="Stone Type"
-                            onChange={(e) => setStoneType(e.target.value)}
-                        >
-                            <MenuItem value="lab">Lab</MenuItem>
-                            <MenuItem value="natural">Natural</MenuItem>
-                        </Select>
-                    </FormControl>
+                            value="Gemstones"
+                            disabled
+                            size="small"
+                            fullWidth
+                        />
+                    )}
 
                     {/* Margin Based On */}
                     <FormControl fullWidth size="small">
@@ -92,7 +99,6 @@ const MarginDialog = ({ open, onclose, onSuccess }) => {
                             <MenuItem value="price">Price</MenuItem>
                         </Select>
                     </FormControl>
-
                 </Box>
 
                 <Table size="small">
