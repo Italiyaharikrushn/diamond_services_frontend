@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import Dashboard from './dashbord';
 import GetDiamond from './csvdiamond/get_diamond';
 import Token from './token';
 
@@ -11,17 +12,21 @@ function ProtectedRoutes() {
         {/* Public route */}
         <Route
           path="/"
-          element={isAuthenticated ? <Navigate to="/diamonds" /> : <Token />}
+          element={isAuthenticated ? <Navigate to="/dashbord/diamonds" /> : <Token />}
         />
 
         {/* Protected diamonds route */}
         <Route
-          path="/diamonds"
-          element={isAuthenticated ? <GetDiamond /> : <Navigate to="/" />}
+          path="/dashbord/diamonds"
+          element={isAuthenticated ? <Dashboard /> : <Navigate to="/" />}
+        />
+        <Route
+          path='/dashbord/gemstones'
+          element={isAuthenticated ? <Dashboard /> : <Navigate to="/" />}
         />
 
         {/* Redirect all unmatched routes */}
-        <Route path="*" element={<Navigate to={isAuthenticated ? "/diamonds" : "/"} />} />
+        <Route path="*" element={<Navigate to={isAuthenticated ? "/dashbord/diamonds" : "/"} />} />
       </Routes>
     </Router>
   );

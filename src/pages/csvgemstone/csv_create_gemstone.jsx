@@ -2,12 +2,11 @@ import React, { useState } from "react";
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, Typography, Snackbar, Alert, LinearProgress
 } from "@mui/material";
-import { useCreateDiamondsMutation } from "../../redux/api/diamondApi";
+import { useCreateGemstonesMutation } from "../../redux/api/gemstoneApi";
 
-const DiamondCSVUploadDialog = ({ open, onClose }) => {
+const GemstoneCSVUploadDialog = ({ open, onClose, shopifyName }) => {
   const [file, setFile] = useState(null);
-  const [createDiamonds, { isLoading }] = useCreateDiamondsMutation();
-  // Notification state
+  const [createGemstones, { isLoading }] = useCreateGemstonesMutation();
   const [notification, setNotification] = useState({
     open: false,
     message: "",
@@ -47,7 +46,7 @@ const DiamondCSVUploadDialog = ({ open, onClose }) => {
       const csvText = e.target.result;
 
       try {
-        const res = await createDiamonds({ csv_data: csvText }).unwrap();
+        const res = await createGemstones({ csv_data: csvText, shopify_name: shopifyName }).unwrap();
 
         setNotification({
           open: true,
@@ -87,7 +86,6 @@ const DiamondCSVUploadDialog = ({ open, onClose }) => {
         </DialogTitle>
 
         <DialogContent>
-          {/* Progress Bar જ્યારે અપલોડ ચાલુ હોય */}
           {isLoading && <LinearProgress sx={{ mb: 2, borderRadius: 1 }} />}
 
           <Box
@@ -151,7 +149,6 @@ const DiamondCSVUploadDialog = ({ open, onClose }) => {
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar for Notifications */}
       <Snackbar
         open={notification.open}
         autoHideDuration={4000}
@@ -171,4 +168,4 @@ const DiamondCSVUploadDialog = ({ open, onClose }) => {
   );
 };
 
-export default DiamondCSVUploadDialog;
+export default GemstoneCSVUploadDialog;

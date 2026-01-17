@@ -14,7 +14,7 @@ export const diamondApi = createApi({
   }),
   tagTypes: ["Diamonds"],
   endpoints: (builder) => ({
-    createFiamonds: builder.mutation({
+    createDiamonds: builder.mutation({
       query: (useData) => ({
         url: "/diamonds/csv/upload",
         method: 'POST',
@@ -61,7 +61,7 @@ export const diamondApi = createApi({
 });
 
 export const {
-  useCreateFiamondsMutation,
+  useCreateDiamondsMutation,
   useGetAllDiamondsQuery,
   useGetDiamondFiltersQuery,
   useBulkDeleteDiamondsMutation,

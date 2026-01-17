@@ -1,18 +1,17 @@
 import React, { useState, useMemo } from "react";
 import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, MenuItem, Box, Button, TablePagination, FormControl, Select, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
-import { useGetAllDiamondsQuery, useGetDiamondFiltersQuery, useBulkDeleteDiamondsMutation, useDeleteAllDiamondsMutation, } from "../../redux/api/diamondApi";
-import DiamondCSVUploadDialog from "./csv_create_diamond";
+import { useGetAllGemstonesQuery, useGetGemstoneFiltersQuery, useBulkDeleteGemstonesMutation, useDeleteAllGemstonesMutation } from "../../redux/api/gemstoneApi";
+import GemstoneCSVUploadDialog from "./csv_create_gemstone";
 import MarginDialog from "../margin/apply_margin";
 
 const INITIAL_FILTERS = {
-  stone_type: "",
   color: "",
   clarity: "",
 };
 
 
-const DiamondPage = ({ category }) => {
+const GemstonePage = ({ category }) => {
   const [filters, setFilters] = useState(INITIAL_FILTERS);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -22,10 +21,10 @@ const DiamondPage = ({ category }) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
-  const [bulkDelete] = useBulkDeleteDiamondsMutation();
-  const [deleteAll] = useDeleteAllDiamondsMutation();
+  const [bulkDelete] = useBulkDeleteGemstonesMutation();
+  const [deleteAll] = useDeleteAllGemstonesMutation();
 
-  const { data: filterRes } = useGetDiamondFiltersQuery({
+  const { data: filterRes } = useGetGemstoneFiltersQuery({
       stone_type: filters.stone_type || undefined
     });
   const queryParams = useMemo(() => {
@@ -34,23 +33,22 @@ const DiamondPage = ({ category }) => {
     return params;
   }, [filters, category]);
 
-  const { data, isLoading, refetch } = useGetAllDiamondsQuery(queryParams);
+  const { data, isLoading, refetch } = useGetAllGemstonesQuery(queryParams);
 
-  const diamonds = Array.isArray(data) ? data : [];
-  const total = diamonds.length;
-  const paginatedDiamonds = diamonds.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-
+  const gemstones = Array.isArray(data) ? data : [];
+  const total = gemstones.length;
+  const paginatedGemstones = gemstones.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   const handleSelectOne = (id) => {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
   };
 
   const handleSelectAll = (e) => {
-    setSelectedIds(e.target.checked ? paginatedDiamonds.map(d => d.id) : []);
+    setSelectedIds(e.target.checked ? paginatedGemstones.map(d => d.id) : []);
   };
 
   const handleConfirmDelete = async () => {
     try {
-      const shopify_name = diamonds[0]?.shopify_name;
+      const shopify_name = gemstones[0]?.shopify_name;
 
       if (!shopify_name) {
         setSnackbar({ open: true, message: "Shopify store name not found!", severity: "warning" });
@@ -115,7 +113,7 @@ const DiamondPage = ({ category }) => {
       {/* CONDITIONAL RENDERING: ડેટા છે કે નહીં તેની તપાસ */}
       {isLoading ? (
         <Box sx={{ textAlign: 'center', py: 5 }}><Typography>Loading...</Typography></Box>
-      ) : diamonds.length === 0 ? (
+      ) : gemstones.length === 0 ? (
         /* જો ડેટા ના મળે તો આ સેક્શન દેખાશે */
         <Paper sx={{ p: 10, textAlign: 'center', bgcolor: '#f9f9f9', borderRadius: "8px", border: '1px solid #eee' }}>
           <Typography variant="h5" color="textSecondary" sx={{ fontWeight: 600 }}>
@@ -129,7 +127,7 @@ const DiamondPage = ({ category }) => {
             <Table size="small">
               <TableHead>
                 <TableRow sx={{ "& th": { py: 2, fontSize: '0.75rem', color: '#333', borderBottom: '2px solid #eee' } }}>
-                  <TableCell padding="checkbox"><Checkbox onChange={handleSelectAll} checked={selectedIds.length === paginatedDiamonds.length && paginatedDiamonds.length > 0} /></TableCell>
+                  <TableCell padding="checkbox"><Checkbox onChange={handleSelectAll} checked={selectedIds.length === paginatedGemstones.length && paginatedGemstones.length > 0} /></TableCell>
                   <TableCell><b>STONE</b></TableCell>
                   <TableCell><b>ORIGIN</b></TableCell>
                   <TableCell><b>SHAPE</b></TableCell>
@@ -142,7 +140,7 @@ const DiamondPage = ({ category }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedDiamonds.map((d) => (
+                {paginatedGemstones.map((d) => (
                   <TableRow key={d.id} sx={{ "& td": { py: 2, fontSize: '0.85rem' }, "&:hover": { bgcolor: '#fafafa' } }}>
                     <TableCell padding="checkbox"><Checkbox checked={selectedIds.includes(d.id)} onChange={() => handleSelectOne(d.id)} /></TableCell>
                     <TableCell sx={{ color: '#1976d2' }}>{d.certificate_no}</TableCell>
@@ -177,10 +175,10 @@ const DiamondPage = ({ category }) => {
       <Snackbar open={snackbar.open} autoHideDuration={3000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
         <Alert severity={snackbar.severity} variant="filled">{snackbar.message}</Alert>
       </Snackbar>
-      <DiamondCSVUploadDialog open={openUpload} onClose={() => setOpenUpload(false)} />
+      <GemstoneCSVUploadDialog open={openUpload} onClose={() => setOpenUpload(false)} shopifyName={gemstones[0]?.shopify_name} />
       <MarginDialog open={openMargin} onclose={() => setOpenMargin(false)} onSuccess={() => refetch()} />
     </Container>
   );
 };
 
-export default DiamondPage;
+export default GemstonePage;

@@ -9,7 +9,8 @@ const Token = () => {
   const [generateToken, { isLoading }] = useGenrateMutation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [storeName, setStoreName] = useState("");       // changed from storeId
+  const [storeName, setStoreName] = useState("");
+  const [shopifyName, setShopifyName] = useState("");
   const [serverError, setServerError] = useState("");
 
   const handleSubmit = async (e) => {
@@ -17,7 +18,7 @@ const Token = () => {
     setServerError("");
 
     try {
-      const res = await generateToken({ store_name: storeName }).unwrap();  // changed here
+      const res = await generateToken({ store_name: storeName, shopify_name: shopifyName }).unwrap();
 
       dispatch(setToken(res.token));
       navigate("/diamonds");
@@ -44,6 +45,15 @@ const Token = () => {
               required
               value={storeName}
               onChange={(e) => setStoreName(e.target.value)}
+              sx={{ mb: 2 }}
+            />
+
+            <TextField
+              label="Shopify Name"
+              fullWidth
+              required
+              value={shopifyName}
+              onChange={(e) => setShopifyName(e.target.value)}
               sx={{ mb: 2 }}
             />
 
