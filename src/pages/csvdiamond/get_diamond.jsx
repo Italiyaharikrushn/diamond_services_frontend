@@ -12,7 +12,7 @@ const INITIAL_FILTERS = {
 };
 
 
-const DiamondPage = ({ category }) => {
+const DiamondPage = ({ stone_type }) => {
   const [filters, setFilters] = useState(INITIAL_FILTERS);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -29,10 +29,10 @@ const DiamondPage = ({ category }) => {
       stone_type: filters.stone_type || undefined
     });
   const queryParams = useMemo(() => {
-    const params = { category };
+    const params = { stone_type };
     Object.entries(filters).forEach(([key, value]) => { if (value) params[key] = value; });
     return params;
-  }, [filters, category]);
+  }, [filters, stone_type]);
 
   const { data, isLoading, refetch } = useGetAllDiamondsQuery(queryParams);
 
@@ -117,7 +117,7 @@ const DiamondPage = ({ category }) => {
       ) : diamonds.length === 0 ? (
         <Paper sx={{ p: 10, textAlign: 'center', bgcolor: '#f9f9f9', borderRadius: "8px", border: '1px solid #eee' }}>
           <Typography variant="h5" color="textSecondary" sx={{ fontWeight: 600 }}>
-            Data Not Found for {category.toUpperCase()}
+            Data Not Found for {stone_type.toUpperCase()}
           </Typography>
         </Paper>
       ) : (
@@ -174,7 +174,7 @@ const DiamondPage = ({ category }) => {
       <Snackbar open={snackbar.open} autoHideDuration={3000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
         <Alert severity={snackbar.severity} variant="filled">{snackbar.message}</Alert>
       </Snackbar>
-      <DiamondCSVUploadDialog open={openUpload} onClose={() => setOpenUpload(false)} />
+      <DiamondCSVUploadDialog open={openUpload} onClose={() => setOpenUpload(false)} defaultType={stone_type} />
       <MarginDialog open={openMargin} onclose={() => setOpenMargin(false)} onSuccess={() => refetch()} defaultType="lab" />
     </Container>
   );
