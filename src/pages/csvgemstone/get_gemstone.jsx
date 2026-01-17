@@ -25,8 +25,8 @@ const GemstonePage = ({ category }) => {
   const [deleteAll] = useDeleteAllGemstonesMutation();
 
   const { data: filterRes } = useGetGemstoneFiltersQuery({
-      stone_type: filters.stone_type || undefined
-    });
+    stone_type: filters.stone_type || undefined
+  });
   const queryParams = useMemo(() => {
     const params = { category };
     Object.entries(filters).forEach(([key, value]) => { if (value) params[key] = value; });
@@ -84,17 +84,16 @@ const GemstonePage = ({ category }) => {
     <Container maxWidth="xl" sx={{ mb: 4 }}>
       <Box sx={{ display: "flex", gap: 1.5, mb: 3, alignItems: "center", flexWrap: "wrap" }}>
         <FormControl size="small" sx={{ minWidth: 140 }}>
-          <Select value={filters.stone_type} displayEmpty onChange={(e) => setFilters(p => ({ ...p, stone_type: e.target.value }))}>
-            <MenuItem value="">Stone Type</MenuItem>
-            <MenuItem value="natural">Natural</MenuItem>
-            <MenuItem value="lab">Lab</MenuItem>
+          <Select value={filters.color} displayEmpty onChange={(e) => setFilters(p => ({ ...p, color: e.target.value }))}>
+            <MenuItem value="">Color</MenuItem>
+            {filterRes?.data?.colors?.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
           </Select>
         </FormControl>
 
         <FormControl size="small" sx={{ minWidth: 140 }}>
-          <Select value={filters.color} displayEmpty onChange={(e) => setFilters(p => ({ ...p, color: e.target.value }))}>
-            <MenuItem value="">Color</MenuItem>
-            {filterRes?.data?.colors?.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+          <Select value={filters.clarity} displayEmpty onChange={(e) => setFilters(p => ({ ...p, clarity: e.target.value }))}>
+            <MenuItem value="">clarity</MenuItem>
+            {filterRes?.data?.clarities?.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
           </Select>
         </FormControl>
 
