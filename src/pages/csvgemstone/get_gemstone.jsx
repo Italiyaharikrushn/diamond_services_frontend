@@ -11,7 +11,7 @@ const INITIAL_FILTERS = {
 };
 
 
-const GemstonePage = ({ category }) => {
+const GemstonePage = ({ category = "" }) => {
   const [filters, setFilters] = useState(INITIAL_FILTERS);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -114,7 +114,7 @@ const GemstonePage = ({ category }) => {
       ) : gemstones.length === 0 ? (
         <Paper sx={{ p: 10, textAlign: 'center', bgcolor: '#f9f9f9', borderRadius: "8px", border: '1px solid #eee' }}>
           <Typography variant="h5" color="textSecondary" sx={{ fontWeight: 600 }}>
-            Data Not Found for {category.toUpperCase()}
+            Data Not Found for {(category || "").toUpperCase()}
           </Typography>
         </Paper>
       ) : (
