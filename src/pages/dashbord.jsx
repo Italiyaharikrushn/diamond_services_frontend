@@ -43,9 +43,9 @@ const Dashboard = () => {
       </Box>
 
       <Box sx={{ mt: 2 }}>
-        {tabValue === 0 && <DiamondPage stone_type="lab" />}
-        {tabValue === 1 && <GemstonePage stone_type="gemstone" />}
-        {tabValue === 2 && <DiamondPage stone_type="natural" />} 
+        {tabValue === 0 && <DiamondPage key="lab" stone_type="lab" />}
+        {tabValue === 1 && <GemstonePage key="gem" stone_type="gemstone" />}
+        {tabValue === 2 && <DiamondPage key="natural" stone_type="natural" />} 
       </Box>
     </Container>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, MenuItem, Box, Button, TablePagination, FormControl, Select, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import { useGetAllDiamondsQuery, useGetDiamondFiltersQuery, useBulkDeleteDiamondsMutation, useDeleteAllDiamondsMutation, } from "../../redux/api/diamondApi";
@@ -29,12 +29,15 @@ const DiamondPage = ({ stone_type }) => {
       stone_type: filters.stone_type || undefined
     });
   const queryParams = useMemo(() => {
-    const params = { stone_type };
+    const params = { stone_type: stone_type.toLowerCase() };
     Object.entries(filters).forEach(([key, value]) => { if (value) params[key] = value; });
     return params;
   }, [filters, stone_type]);
 
   const { data, isLoading, refetch } = useGetAllDiamondsQuery(queryParams);
+  useEffect(() => {
+    refetch();
+  }, [stone_type, refetch]);
 
   const diamonds = Array.isArray(data) ? data : [];
   const total = diamonds.length;
@@ -67,7 +70,7 @@ const DiamondPage = ({ stone_type }) => {
       }
 
       if (res.success) {
-        setSnackbar({ open: true, message: `Successfully deleted ${res.deleted_count} diamonds`, severity: "success" });
+        setSnackbar({ open: true, message: `Successfully deleted ${res.deleted_count || 0} diamonds`, severity: "success" });
         setSelectedIds([]);
         refetch();
       } else {
@@ -174,7 +177,7 @@ const DiamondPage = ({ stone_type }) => {
       <Snackbar open={snackbar.open} autoHideDuration={3000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
         <Alert severity={snackbar.severity} variant="filled">{snackbar.message}</Alert>
       </Snackbar>
-      <DiamondCSVUploadDialog open={openUpload} onClose={() => setOpenUpload(false)} defaultType={stone_type} />
+      <DiamondCSVUploadDialog open={openUpload} onClose={(shouldRefetch) => { setOpenUpload(false); if (shouldRefetch === true) { refetch(); } }} defaultType={stone_type} />
       <MarginDialog open={openMargin} onclose={() => setOpenMargin(false)} onSuccess={() => refetch()} defaultType="lab" />
     </Container>
   );
