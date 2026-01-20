@@ -21,9 +21,17 @@ export const marginApi = createApi({
                 body: useData,
             }),
         }),
+
+        getMargins: builder.query({
+            query: () => ({
+                url: "/margin/stone_margin",
+            }),
+            providesTags: ["Margins"],
+        }),
     }),
 });
 
 export const {
     useCreateMarginMutation,
+    useGetMarginsQuery,
 } = marginApi;

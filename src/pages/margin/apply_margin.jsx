@@ -3,9 +3,11 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, TextFie
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { useCreateMarginMutation } from "../../redux/api/marginApi";
+import { useGetMarginsQuery } from "../../redux/api/marginApi";
 
 const MarginDialog = ({ open, onclose, onSuccess, defaultType }) => {
     const [createMargin, { isLoading }] = useCreateMarginMutation();
+    const { data: marginRes, isLoading: marginLoading } = useGetMarginsQuery();
 
     const [stoneType, setStoneType] = useState(defaultType || "lab");
     const [unit, setUnit] = useState("carat");
@@ -13,10 +15,24 @@ const MarginDialog = ({ open, onclose, onSuccess, defaultType }) => {
     const [submitted, setSubmitted] = useState(false);
 
     useEffect(() => {
-        if (open) {
-            setStoneType(defaultType || "lab");
+        if (open && marginRes?.Data) {
+            const found = marginRes.Data.find(
+                (m) => m.stone_type === stoneType && m.unit === unit
+            );
+
+            if (found) {
+                setRows(
+                    found.markups.map((m) => ({
+                        start: m.start,
+                        end: m.end,
+                        margin: m.markup
+                    }))
+                );
+            } else {
+                setRows([{ start: "", end: "", margin: "" }]);
+            }
         }
-    }, [open, defaultType]);
+    }, [open, marginRes, stoneType, unit]);
 
     const handleSubmit = async () => {
         setSubmitted(true);
