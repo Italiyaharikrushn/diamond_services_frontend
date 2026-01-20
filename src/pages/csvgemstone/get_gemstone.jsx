@@ -1,15 +1,17 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, MenuItem, Box, Button, TablePagination, FormControl, Select, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import { useGetAllGemstonesQuery, useGetGemstoneFiltersQuery, useBulkDeleteGemstonesMutation, useDeleteAllGemstonesMutation } from "../../redux/api/gemstoneApi";
 import GemstoneCSVUploadDialog from "./csv_create_gemstone";
 import MarginDialog from "../margin/apply_margin";
+import Slider from "@mui/material/Slider";
 
 const INITIAL_FILTERS = {
   color: "",
   clarity: "",
+  price: [0,0],
+  carat: [0,0],
 };
-
 
 const GemstonePage = ({ category = "" }) => {
   const [filters, setFilters] = useState(INITIAL_FILTERS);
@@ -28,10 +30,43 @@ const GemstonePage = ({ category = "" }) => {
     stone_type: filters.stone_type || undefined
   });
   const queryParams = useMemo(() => {
-    const params = { category };
-    Object.entries(filters).forEach(([key, value]) => { if (value) params[key] = value; });
+    const params = { category, min_price: filters.price[0], max_price: filters.price[1], min_carat: filters.carat[0], max_carat: filters.carat[1] };
+    Object.entries(filters).forEach(([key, value]) => { if (value && key !== 'price' && key !== 'carat') params[key] = value; });
     return params;
   }, [filters, category]);
+
+  useEffect(() => {
+    if (filterRes?.data) {
+      setFilters(p => ({
+        ...p,
+        price: [
+          filterRes?.data?.price_ranges?.min,
+          filterRes?.data?.price_ranges?.max
+        ],
+        carat: [
+          filterRes?.data?.carat_ranges?.min,
+          filterRes?.data?.carat_ranges?.max
+        ]
+      }));
+    }
+  }, [filterRes]);
+
+  const handleReset = () => {
+    if (filterRes?.data) {
+      setFilters({
+        color: "",
+        clarity: "",
+        price: [
+          filterRes?.data?.price_ranges?.min || 0,
+          filterRes?.data?.price_ranges?.max || 0
+        ],
+        carat: [
+          filterRes?.data?.carat_ranges?.min || 0,
+          filterRes?.data?.carat_ranges?.max || 0
+        ]
+      });
+    }
+  };
 
   const { data, isLoading, refetch } = useGetAllGemstonesQuery(queryParams);
 
@@ -97,7 +132,59 @@ const GemstonePage = ({ category = "" }) => {
           </Select>
         </FormControl>
 
-        <Button variant="outlined" size="small" disabled={JSON.stringify(filters) === JSON.stringify(INITIAL_FILTERS)} onClick={() => setFilters(INITIAL_FILTERS)}>
+        <FormControl size="small" sx={{ minWidth: 160 }}>
+          <Select
+            displayEmpty
+            value={filters.price}
+            renderValue={(selected) => `Price: $${selected[0]} - $${selected[1]}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Box sx={{ px: 3, py: 2, width: 250 }}>
+              <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1, display: 'block' }}>
+                Select Price Range
+              </Typography>
+              <Slider
+                value={filters.price}
+                onChange={(e, val) => setFilters(prev => ({ ...prev, price: val }))}
+                min={filterRes?.data?.price_ranges?.min}
+                max={filterRes?.data?.price_ranges?.max}
+                valueLabelDisplay="auto"
+              />
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                <Typography variant="caption">${filters.price[0]}</Typography>
+                <Typography variant="caption">${filters.price[1]}</Typography>
+              </Box>
+            </Box>
+          </Select>
+        </FormControl>
+
+        <FormControl size="small" sx={{ minWidth: 160 }}>
+          <Select
+            displayEmpty
+            value={filters.carat}
+            renderValue={(selected) => `Carat: ${selected[0]} - ${selected[1]}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Box sx={{ px: 3, py: 2, width: 250 }}>
+              <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1, display: 'block' }}>
+                Select Carat Range
+              </Typography>
+              <Slider
+                value={filters.carat}
+                onChange={(e, val) => setFilters(prev => ({ ...prev, carat: val }))}
+                min={filterRes?.data?.carat_ranges?.min}
+                max={filterRes?.data?.carat_ranges?.max}
+                valueLabelDisplay="auto"
+              />
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                <Typography variant="caption">{filters.carat[0]} ct</Typography>
+                <Typography variant="caption">{filters.carat[1]} ct</Typography>
+              </Box>
+            </Box>
+          </Select>
+        </FormControl>
+
+        <Button variant="outlined" size="small" disabled={!filterRes?.data} onClick={handleReset}>
           RESET
         </Button>
 

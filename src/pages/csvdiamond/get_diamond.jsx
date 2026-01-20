@@ -4,11 +4,14 @@ import Checkbox from "@mui/material/Checkbox";
 import { useGetAllDiamondsQuery, useGetDiamondFiltersQuery, useBulkDeleteDiamondsMutation, useDeleteAllDiamondsMutation, } from "../../redux/api/diamondApi";
 import DiamondCSVUploadDialog from "./csv_create_diamond";
 import MarginDialog from "../margin/apply_margin";
+import Slider from "@mui/material/Slider";
 
 const INITIAL_FILTERS = {
   stone_type: "",
   color: "",
   clarity: "",
+  price: [],
+  carat: [],
 };
 
 
@@ -26,11 +29,24 @@ const DiamondPage = ({ stone_type = "" }) => {
   const [deleteAll] = useDeleteAllDiamondsMutation();
 
   const { data: filterRes } = useGetDiamondFiltersQuery({
-      stone_type: filters.stone_type || undefined
-    });
+    stone_type: filters.stone_type || undefined
+  });
   const queryParams = useMemo(() => {
     const params = { stone_type: stone_type.toLowerCase() };
-    Object.entries(filters).forEach(([key, value]) => { if (value) params[key] = value; });
+
+    if (filters.color) params.color = filters.color;
+    if (filters.clarity) params.clarity = filters.clarity;
+
+    if (filters.price.length === 2) {
+      params.price_min = filters.price[0];
+      params.price_max = filters.price[1];
+    }
+
+    if (filters.carat.length === 2) {
+      params.carat_min = filters.carat[0];
+      params.carat_max = filters.carat[1];
+    }
+
     return params;
   }, [filters, stone_type]);
 
@@ -38,6 +54,22 @@ const DiamondPage = ({ stone_type = "" }) => {
   useEffect(() => {
     refetch();
   }, [stone_type, refetch]);
+
+  useEffect(() => {
+    if (filterRes?.data) {
+      setFilters(p => ({
+        ...p,
+        price: [
+          filterRes.data.price_range.min,
+          filterRes.data.price_range.max
+        ],
+        carat: [
+          filterRes.data.carat_range.min,
+          filterRes.data.carat_range.max
+        ]
+      }));
+    }
+  }, [filterRes]);
 
   const diamonds = Array.isArray(data) ? data : [];
   const total = diamonds.length;
@@ -49,6 +81,24 @@ const DiamondPage = ({ stone_type = "" }) => {
 
   const handleSelectAll = (e) => {
     setSelectedIds(e.target.checked ? paginatedDiamonds.map(d => d.id) : []);
+  };
+
+  const handleReset = () => {
+    if (filterRes?.data) {
+      setFilters({
+        stone_type: "",
+        color: "",
+        clarity: "",
+        price: [
+          filterRes.data.price_range.min,
+          filterRes.data.price_range.max
+        ],
+        carat: [
+          filterRes.data.carat_range.min,
+          filterRes.data.carat_range.max
+        ]
+      });
+    }
   };
 
   const handleConfirmDelete = async () => {
@@ -103,7 +153,59 @@ const DiamondPage = ({ stone_type = "" }) => {
           </Select>
         </FormControl>
 
-        <Button variant="outlined" size="small" disabled={JSON.stringify(filters) === JSON.stringify(INITIAL_FILTERS)} onClick={() => setFilters(INITIAL_FILTERS)}>
+        <FormControl size="small" sx={{ minWidth: 160 }}>
+          <Select
+            displayEmpty
+            value={filters.price}
+            renderValue={(selected) => `Price: $${selected[0]} - $${selected[1]}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Box sx={{ px: 3, py: 2, width: 250 }}>
+              <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1, display: 'block' }}>
+                Select Price Range
+              </Typography>
+              <Slider
+                value={filters.price}
+                onChange={(e, val) => setFilters(prev => ({ ...prev, price: val }))}
+                min={filterRes?.data?.price_range?.min || 0}
+                max={filterRes?.data?.price_range?.max || 15000}
+                valueLabelDisplay="auto"
+              />
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                <Typography variant="caption">${filters.price[0]}</Typography>
+                <Typography variant="caption">${filters.price[1]}</Typography>
+              </Box>
+            </Box>
+          </Select>
+        </FormControl>
+
+        <FormControl size="small" sx={{ minWidth: 160 }}>
+          <Select
+            displayEmpty
+            value={filters.carat}
+            renderValue={(selected) => `Carat: ${selected[0]} - ${selected[1]}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Box sx={{ px: 3, py: 2, width: 250 }}>
+              <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1, display: 'block' }}>
+                Select Carat Range
+              </Typography>
+              <Slider
+                value={filters.carat}
+                onChange={(e, val) => setFilters(prev => ({ ...prev, carat: val }))}
+                min={filterRes?.data?.carat_range?.min || 0}
+                max={filterRes?.data?.carat_range?.max || 40}
+                valueLabelDisplay="auto"
+              />
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                <Typography variant="caption">{filters.carat[0]} ct</Typography>
+                <Typography variant="caption">{filters.carat[1]} ct</Typography>
+              </Box>
+            </Box>
+          </Select>
+        </FormControl>
+
+        <Button variant="outlined" size="small" disabled={!filterRes?.data} onClick={handleReset}>
           RESET
         </Button>
 
@@ -178,7 +280,7 @@ const DiamondPage = ({ stone_type = "" }) => {
         <Alert severity={snackbar.severity} variant="filled">{snackbar.message}</Alert>
       </Snackbar>
       <DiamondCSVUploadDialog open={openUpload} onClose={(shouldRefetch) => { setOpenUpload(false); if (shouldRefetch === true) { refetch(); } }} defaultType={stone_type} />
-      <MarginDialog open={openMargin} onclose={() => setOpenMargin(false)} onSuccess={() => refetch()} defaultType="lab" />
+      <MarginDialog open={openMargin} onclose={() => setOpenMargin(false)} onSuccess={() => refetch()} defaultType={stone_type === "lab" ? "lab" : "natural"} />
     </Container>
   );
 };

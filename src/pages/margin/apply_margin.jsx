@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, TextField, Select, MenuItem, FormControl, InputLabel, Table, TableBody, TableCell, TableHead, TableRow, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
@@ -12,7 +12,7 @@ const MarginDialog = ({ open, onclose, onSuccess, defaultType }) => {
     const [rows, setRows] = useState([{ start: "", end: "", margin: "" }]);
     const [submitted, setSubmitted] = useState(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (open) {
             setStoneType(defaultType || "lab");
         }
