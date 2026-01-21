@@ -245,7 +245,17 @@ const DiamondPage = ({ stone_type = "" }) => {
                 {paginatedDiamonds.map((d) => (
                   <TableRow key={d.id} sx={{ "& td": { py: 2, fontSize: '0.85rem' }, "&:hover": { bgcolor: '#fafafa' } }}>
                     <TableCell padding="checkbox"><Checkbox checked={selectedIds.includes(d.id)} onChange={() => handleSelectOne(d.id)} /></TableCell>
-                    <TableCell sx={{ color: '#1976d2' }}>{d.certificate_no}</TableCell>
+                    <TableCell>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <Box
+                          component="img"
+                          src={d.image_source}
+                          alt={d.certificate_no}
+                          sx={{ width: 36, height: 36, borderRadius: "20%" }}
+                        />
+                        {d.certificate_no}
+                      </Box>
+                    </TableCell>
                     <TableCell>{d.origin}</TableCell>
                     <TableCell>{d.shape}</TableCell>
                     <TableCell>{d.carat}</TableCell>
