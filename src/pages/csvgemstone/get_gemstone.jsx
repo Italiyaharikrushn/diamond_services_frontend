@@ -136,7 +136,7 @@ const GemstonePage = ({ category = "" }) => {
           <Select
             displayEmpty
             value={filters.price}
-            renderValue={(selected) => `Price: $${selected[0]} - $${selected[1]}`}
+            renderValue={(selected) => `Select Price`}
             onClick={(e) => e.stopPropagation()}
           >
             <Box sx={{ px: 3, py: 2, width: 250 }}>
@@ -162,7 +162,7 @@ const GemstonePage = ({ category = "" }) => {
           <Select
             displayEmpty
             value={filters.carat}
-            renderValue={(selected) => `Carat: ${selected[0]} - ${selected[1]}`}
+            renderValue={(selected) => `Select Carat`}
             onClick={(e) => e.stopPropagation()}
           >
             <Box sx={{ px: 3, py: 2, width: 250 }}>
@@ -259,7 +259,7 @@ const GemstonePage = ({ category = "" }) => {
         <Alert severity={snackbar.severity} variant="filled">{snackbar.message}</Alert>
       </Snackbar>
       <GemstoneCSVUploadDialog open={openUpload} onClose={() => setOpenUpload(false)} shopifyName={gemstones[0]?.shopify_name} />
-      <MarginDialog open={openMargin} onclose={() => setOpenMargin(false)} onSuccess={() => refetch()} defaultType="gemstones" />
+      <MarginDialog open={openMargin} onclose={() => setOpenMargin(false)} onSuccess={() => refetch()} defaultType="gemstones" filterData={filterRes?.data} />
     </Container>
   );
 };

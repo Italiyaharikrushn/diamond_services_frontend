@@ -7,7 +7,6 @@ import MarginDialog from "../margin/apply_margin";
 import Slider from "@mui/material/Slider";
 
 const INITIAL_FILTERS = {
-  stone_type: "",
   color: "",
   clarity: "",
   price: [],
@@ -139,10 +138,9 @@ const DiamondPage = ({ stone_type = "" }) => {
     <Container maxWidth="xl" sx={{ mb: 4 }}>
       <Box sx={{ display: "flex", gap: 1.5, mb: 3, alignItems: "center", flexWrap: "wrap" }}>
         <FormControl size="small" sx={{ minWidth: 140 }}>
-          <Select value={filters.stone_type} displayEmpty onChange={(e) => setFilters(p => ({ ...p, stone_type: e.target.value }))}>
-            <MenuItem value="">Stone Type</MenuItem>
-            <MenuItem value="natural">Natural</MenuItem>
-            <MenuItem value="lab">Lab</MenuItem>
+          <Select value={filters.clarity} displayEmpty onChange={(e) => setFilters(p => ({ ...p, clarity: e.target.value }))}>
+            <MenuItem value="">clarity</MenuItem>
+            {filterRes?.data?.clarities?.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
           </Select>
         </FormControl>
 
@@ -157,7 +155,7 @@ const DiamondPage = ({ stone_type = "" }) => {
           <Select
             displayEmpty
             value={filters.price}
-            renderValue={(selected) => `Price: $${selected[0]} - $${selected[1]}`}
+            renderValue={(selected) => `Select Price`}
             onClick={(e) => e.stopPropagation()}
           >
             <Box sx={{ px: 3, py: 2, width: 250 }}>
@@ -183,7 +181,7 @@ const DiamondPage = ({ stone_type = "" }) => {
           <Select
             displayEmpty
             value={filters.carat}
-            renderValue={(selected) => `Carat: ${selected[0]} - ${selected[1]}`}
+            renderValue={(selected) => `Select Carat`}
             onClick={(e) => e.stopPropagation()}
           >
             <Box sx={{ px: 3, py: 2, width: 250 }}>
@@ -280,7 +278,7 @@ const DiamondPage = ({ stone_type = "" }) => {
         <Alert severity={snackbar.severity} variant="filled">{snackbar.message}</Alert>
       </Snackbar>
       <DiamondCSVUploadDialog open={openUpload} onClose={(shouldRefetch) => { setOpenUpload(false); if (shouldRefetch === true) { refetch(); } }} defaultType={stone_type} />
-      <MarginDialog open={openMargin} onclose={() => setOpenMargin(false)} onSuccess={() => refetch()} defaultType={stone_type === "lab" ? "lab" : "natural"} />
+      <MarginDialog open={openMargin} onclose={() => setOpenMargin(false)} onSuccess={() => refetch()} defaultType={stone_type === "lab" ? "lab" : "natural"} filterData={filterRes?.data} />
     </Container>
   );
 };

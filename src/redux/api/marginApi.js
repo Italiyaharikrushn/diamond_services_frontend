@@ -20,6 +20,7 @@ export const marginApi = createApi({
                 method: "POST",
                 body: useData,
             }),
+            invalidatesTags: ["Margins"],
         }),
 
         getMargins: builder.query({
