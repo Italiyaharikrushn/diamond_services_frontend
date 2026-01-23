@@ -1,20 +1,12 @@
-import React, { useState, useMemo, useEffect } from "react";
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, MenuItem, Box, Button, TablePagination, FormControl, Select, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, TablePagination, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import { useGetAllGemstonesQuery, useGetGemstoneFiltersQuery, useBulkDeleteGemstonesMutation, useDeleteAllGemstonesMutation } from "../../redux/api/gemstoneApi";
 import GemstoneCSVUploadDialog from "./csv_create_gemstone";
 import MarginDialog from "../margin/apply_margin";
-import Slider from "@mui/material/Slider";
-
-const INITIAL_FILTERS = {
-  color: "",
-  clarity: "",
-  price: [0,0],
-  carat: [0,0],
-};
+import Filterselects from "../../components/Select";
 
 const GemstonePage = ({ category = "" }) => {
-  const [filters, setFilters] = useState(INITIAL_FILTERS);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openUpload, setOpenUpload] = useState(false);
@@ -23,56 +15,47 @@ const GemstonePage = ({ category = "" }) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
-  const [bulkDelete] = useBulkDeleteGemstonesMutation();
-  const [deleteAll] = useDeleteAllGemstonesMutation();
+  const [filters, setFilters] = useState({
+    color: "",
+    clarity: "",
+    price: [0, 0],
+    carat: [0, 0],
+    stone_type: category || ""
+  });
 
   const { data: filterRes } = useGetGemstoneFiltersQuery({
     stone_type: filters.stone_type || undefined
   });
-  const queryParams = useMemo(() => {
-    const params = { category, min_price: filters.price[0], max_price: filters.price[1], min_carat: filters.carat[0], max_carat: filters.carat[1] };
-    Object.entries(filters).forEach(([key, value]) => { if (value && key !== 'price' && key !== 'carat') params[key] = value; });
-    return params;
-  }, [filters, category]);
+
+  const [bulkDelete] = useBulkDeleteGemstonesMutation();
+  const [deleteAll] = useDeleteAllGemstonesMutation();
+
+  const { data, isLoading, refetch } = useGetAllGemstonesQuery({
+    stone_type: filters.stone_type || undefined,
+    color: filters.color || undefined,
+    clarity: filters.clarity || undefined,
+    min_price: filters.price[0],
+    max_price: filters.price[1],
+    min_carat: filters.carat[0],
+    max_carat: filters.carat[1],
+    page: page + 1,
+    limit: rowsPerPage
+  });
 
   useEffect(() => {
     if (filterRes?.data) {
       setFilters(p => ({
         ...p,
-        price: [
-          filterRes?.data?.price_ranges?.min,
-          filterRes?.data?.price_ranges?.max
-        ],
-        carat: [
-          filterRes?.data?.carat_ranges?.min,
-          filterRes?.data?.carat_ranges?.max
-        ]
+        price: [filterRes.data.price_ranges.min, filterRes.data.price_ranges.max],
+        carat: [filterRes.data.carat_ranges.min, filterRes.data.carat_ranges.max]
       }));
     }
   }, [filterRes]);
 
-  const handleReset = () => {
-    if (filterRes?.data) {
-      setFilters({
-        color: "",
-        clarity: "",
-        price: [
-          filterRes?.data?.price_ranges?.min || 0,
-          filterRes?.data?.price_ranges?.max || 0
-        ],
-        carat: [
-          filterRes?.data?.carat_ranges?.min || 0,
-          filterRes?.data?.carat_ranges?.max || 0
-        ]
-      });
-    }
-  };
-
-  const { data, isLoading, refetch } = useGetAllGemstonesQuery(queryParams);
-
   const gemstones = Array.isArray(data) ? data : [];
   const total = gemstones.length;
   const paginatedGemstones = gemstones.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
   const handleSelectOne = (id) => {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
   };
@@ -118,75 +101,10 @@ const GemstonePage = ({ category = "" }) => {
   return (
     <Container maxWidth="xl" sx={{ mb: 4 }}>
       <Box sx={{ display: "flex", gap: 1.5, mb: 3, alignItems: "center", flexWrap: "wrap" }}>
-        <FormControl size="small" sx={{ minWidth: 140 }}>
-          <Select value={filters.color} displayEmpty onChange={(e) => setFilters(p => ({ ...p, color: e.target.value }))}>
-            <MenuItem value="">Color</MenuItem>
-            {filterRes?.data?.colors?.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
-          </Select>
-        </FormControl>
-
-        <FormControl size="small" sx={{ minWidth: 140 }}>
-          <Select value={filters.clarity} displayEmpty onChange={(e) => setFilters(p => ({ ...p, clarity: e.target.value }))}>
-            <MenuItem value="">clarity</MenuItem>
-            {filterRes?.data?.clarities?.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
-          </Select>
-        </FormControl>
-
-        <FormControl size="small" sx={{ minWidth: 160 }}>
-          <Select
-            displayEmpty
-            value={filters.price}
-            renderValue={(selected) => `Select Price`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Box sx={{ px: 3, py: 2, width: 250 }}>
-              <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1, display: 'block' }}>
-                Select Price Range
-              </Typography>
-              <Slider
-                value={filters.price}
-                onChange={(e, val) => setFilters(prev => ({ ...prev, price: val }))}
-                min={filterRes?.data?.price_ranges?.min}
-                max={filterRes?.data?.price_ranges?.max}
-                valueLabelDisplay="auto"
-              />
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-                <Typography variant="caption">${filters.price[0]}</Typography>
-                <Typography variant="caption">${filters.price[1]}</Typography>
-              </Box>
-            </Box>
-          </Select>
-        </FormControl>
-
-        <FormControl size="small" sx={{ minWidth: 160 }}>
-          <Select
-            displayEmpty
-            value={filters.carat}
-            renderValue={(selected) => `Select Carat`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Box sx={{ px: 3, py: 2, width: 250 }}>
-              <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1, display: 'block' }}>
-                Select Carat Range
-              </Typography>
-              <Slider
-                value={filters.carat}
-                onChange={(e, val) => setFilters(prev => ({ ...prev, carat: val }))}
-                min={filterRes?.data?.carat_ranges?.min}
-                max={filterRes?.data?.carat_ranges?.max}
-                valueLabelDisplay="auto"
-              />
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-                <Typography variant="caption">{filters.carat[0]} ct</Typography>
-                <Typography variant="caption">{filters.carat[1]} ct</Typography>
-              </Box>
-            </Box>
-          </Select>
-        </FormControl>
-
-        <Button variant="outlined" size="small" disabled={!filterRes?.data} onClick={handleReset}>
-          RESET
-        </Button>
+        <Filterselects
+          filters={filters}
+          setFilters={setFilters}
+        />
 
         <Box sx={{ flexGrow: 1 }} />
         <Button variant="contained" disabled={selectedIds.length === 0} onClick={() => setConfirmOpen(true)} color="inherit" sx={{ boxShadow: 'none' }}>
@@ -198,12 +116,6 @@ const GemstonePage = ({ category = "" }) => {
 
       {isLoading ? (
         <Box sx={{ textAlign: 'center', py: 5 }}><Typography>Loading...</Typography></Box>
-      ) : gemstones.length === 0 ? (
-        <Paper sx={{ p: 10, textAlign: 'center', bgcolor: '#f9f9f9', borderRadius: "8px", border: '1px solid #eee' }}>
-          <Typography variant="h5" color="textSecondary" sx={{ fontWeight: 600 }}>
-            Data Not Found for {(category || "").toUpperCase()}
-          </Typography>
-        </Paper>
       ) : (
         <Paper sx={{ borderRadius: "8px", border: '1px solid #eee', boxShadow: 'none', overflow: 'hidden' }}>
           <TableContainer>
