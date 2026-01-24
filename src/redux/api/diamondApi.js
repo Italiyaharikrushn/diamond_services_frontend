@@ -51,10 +51,10 @@ export const diamondApi = createApi({
 
 
     deleteAllDiamonds: builder.mutation({
-      query: ({ shopify_app }) => ({
+      query: ({ shopify_app, stone_type }) => ({
         url: "/diamonds/all-delete",
         method: "DELETE",
-        params: { shopify_app },
+        params: { shopify_app, stone_type },
       }),
     }),
   }),

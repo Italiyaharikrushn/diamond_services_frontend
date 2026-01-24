@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, TablePagination, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert } from "@mui/material";
+import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, TablePagination, Snackbar, Alert } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import { useGetAllGemstonesQuery, useGetGemstoneFiltersQuery, useBulkDeleteGemstonesMutation, useDeleteAllGemstonesMutation } from "../../redux/api/gemstoneApi";
 import GemstoneCSVUploadDialog from "./csv_create_gemstone";
 import MarginDialog from "../margin/apply_margin";
 import Filterselects from "../../components/Select";
+import DeleteData from "../../components/Deletebutton";
 
 const GemstonePage = ({ category = "" }) => {
   const [page, setPage] = useState(0);
@@ -12,7 +13,6 @@ const GemstonePage = ({ category = "" }) => {
   const [openUpload, setOpenUpload] = useState(false);
   const [openMargin, setOpenMargin] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
-  const [confirmOpen, setConfirmOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
   const [filters, setFilters] = useState({
@@ -54,6 +54,7 @@ const GemstonePage = ({ category = "" }) => {
 
   const gemstones = Array.isArray(data) ? data : [];
   const total = gemstones.length;
+  const shopify_name = gemstones[0]?.shopify_name;
   const paginatedGemstones = gemstones.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   const handleSelectOne = (id) => {
@@ -64,40 +65,6 @@ const GemstonePage = ({ category = "" }) => {
     setSelectedIds(e.target.checked ? paginatedGemstones.map(d => d.id) : []);
   };
 
-  const handleConfirmDelete = async () => {
-    try {
-      const shopify_name = gemstones[0]?.shopify_name;
-
-      if (!shopify_name) {
-        setSnackbar({ open: true, message: "Shopify store name not found!", severity: "warning" });
-        return;
-      }
-
-      const isAll = selectedIds.length === total;
-      let res;
-
-      if (isAll) {
-        res = await deleteAll({ shopify_name }).unwrap();
-      } else {
-        res = await bulkDelete({ ids: selectedIds, shopify_name }).unwrap();
-      }
-
-      if (res.success) {
-        setSnackbar({ open: true, message: `Successfully deleted ${res.deleted_count} diamonds`, severity: "success" });
-        setSelectedIds([]);
-        refetch();
-      } else {
-        throw new Error(res.error || "Delete failed");
-      }
-
-    } catch (err) {
-      setSnackbar({
-        open: true,
-        message: err?.data?.detail || err.message || "Delete Failed",
-        severity: "error"
-      });
-    }
-  };
   return (
     <Container maxWidth="xl" sx={{ mb: 4 }}>
       <Box sx={{ display: "flex", gap: 1.5, mb: 3, alignItems: "center", flexWrap: "wrap" }}>
@@ -107,9 +74,7 @@ const GemstonePage = ({ category = "" }) => {
         />
 
         <Box sx={{ flexGrow: 1 }} />
-        <Button variant="contained" disabled={selectedIds.length === 0} onClick={() => setConfirmOpen(true)} color="inherit" sx={{ boxShadow: 'none' }}>
-          DELETE SELECTED
-        </Button>
+        <DeleteData selectedIds={selectedIds} total={total} shopify_name={shopify_name} setSelectedIds={setSelectedIds} refetch={refetch} setSnackbar={setSnackbar} bulkDeleteMutation={bulkDelete} deleteAllMutation={deleteAll} label="gemstones" />
         <Button variant="contained" onClick={() => setOpenMargin(true)} sx={{ bgcolor: '#1976d2', boxShadow: 'none' }}>MARGIN</Button>
         <Button variant="contained" onClick={() => setOpenUpload(true)} sx={{ bgcolor: '#1976d2', boxShadow: 'none' }}>IMPORT CSV</Button>
       </Box>
@@ -168,15 +133,6 @@ const GemstonePage = ({ category = "" }) => {
         </Paper>
       )}
 
-      {/* DIALOGS & SNACKBAR */}
-      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
-        <DialogTitle>Confirm Delete</DialogTitle>
-        <DialogContent>Are you sure you want to delete selected items?</DialogContent>
-        <DialogActions>
-          <Button onClick={() => setConfirmOpen(false)}>Cancel</Button>
-          <Button onClick={() => { handleConfirmDelete(); setConfirmOpen(false); }} color="error">Delete</Button>
-        </DialogActions>
-      </Dialog>
       <Snackbar open={snackbar.open} autoHideDuration={3000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
         <Alert severity={snackbar.severity} variant="filled">{snackbar.message}</Alert>
       </Snackbar>

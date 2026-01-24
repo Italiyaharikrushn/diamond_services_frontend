@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, TablePagination, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
-import { useGetAllDiamondsQuery, useGetDiamondFiltersQuery, useBulkDeleteDiamondsMutation, useDeleteAllDiamondsMutation, } from "../../redux/api/diamondApi";
-import DiamondCSVUploadDialog from "./csv_create_diamond";
 import MarginDialog from "../margin/apply_margin";
 import Filterselects from "../../components/Select";
+import DeleteData from "../../components/Deletebutton";
+import DiamondCSVUploadDialog from "./csv_create_diamond";
+import { useGetAllDiamondsQuery, useGetDiamondFiltersQuery, useBulkDeleteDiamondsMutation, useDeleteAllDiamondsMutation } from "../../redux/api/diamondApi";
+import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, TablePagination, Snackbar, Alert } from "@mui/material";
 
 const DiamondPage = ({ stone_type = "" }) => {
   const [page, setPage] = useState(0);
@@ -12,7 +13,8 @@ const DiamondPage = ({ stone_type = "" }) => {
   const [openUpload, setOpenUpload] = useState(false);
   const [openMargin, setOpenMargin] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
-  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [bulkDelete] = useBulkDeleteDiamondsMutation();
+  const [deleteAll] = useDeleteAllDiamondsMutation();
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
   const [filters, setFilters] = useState({
@@ -25,9 +27,6 @@ const DiamondPage = ({ stone_type = "" }) => {
   const { data: filterRes } = useGetDiamondFiltersQuery({
     stone_type: filters.stone_type || undefined
   });
-
-  const [bulkDelete] = useBulkDeleteDiamondsMutation();
-  const [deleteAll] = useDeleteAllDiamondsMutation();
 
   const { data, isLoading, refetch } = useGetAllDiamondsQuery({
     stone_type: stone_type.toLowerCase(),
@@ -53,6 +52,7 @@ const DiamondPage = ({ stone_type = "" }) => {
 
   const diamonds = Array.isArray(data) ? data : [];
   const total = diamonds.length;
+  const shopify_name = diamonds[0]?.shopify_name;
   const paginatedDiamonds = diamonds.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   const handleSelectOne = (id) => {
@@ -63,40 +63,6 @@ const DiamondPage = ({ stone_type = "" }) => {
     setSelectedIds(e.target.checked ? paginatedDiamonds.map(d => d.id) : []);
   };
 
-  const handleConfirmDelete = async () => {
-    try {
-      const shopify_name = diamonds[0]?.shopify_name;
-
-      if (!shopify_name) {
-        setSnackbar({ open: true, message: "Shopify store name not found!", severity: "warning" });
-        return;
-      }
-
-      const isAll = selectedIds.length === total;
-      let res;
-
-      if (isAll) {
-        res = await deleteAll({ shopify_name }).unwrap();
-      } else {
-        res = await bulkDelete({ ids: selectedIds, shopify_name }).unwrap();
-      }
-
-      if (res.success) {
-        setSnackbar({ open: true, message: `Successfully deleted ${res.deleted_count || 0} diamonds`, severity: "success" });
-        setSelectedIds([]);
-        refetch();
-      } else {
-        throw new Error(res.error || "Delete failed");
-      }
-
-    } catch (err) {
-      setSnackbar({
-        open: true,
-        message: err?.data?.detail || err.message || "Delete Failed",
-        severity: "error"
-      });
-    }
-  };
   return (
     <Container maxWidth="xl" sx={{ mb: 4 }}>
       <Box sx={{ display: "flex", gap: 1.5, mb: 3, alignItems: "center", flexWrap: "wrap" }}>
@@ -107,9 +73,9 @@ const DiamondPage = ({ stone_type = "" }) => {
         />
 
         <Box sx={{ flexGrow: 1 }} />
-        <Button variant="contained" disabled={selectedIds.length === 0} onClick={() => setConfirmOpen(true)} color="inherit" sx={{ boxShadow: 'none' }}>
-          DELETE SELECTED
-        </Button>
+
+        < DeleteData selectedIds={selectedIds} total={total} shopify_name={shopify_name} setSelectedIds={setSelectedIds} refetch={refetch} setSnackbar={setSnackbar} bulkDeleteMutation={bulkDelete} deleteAllMutation={deleteAll} label="diamonds" stone_type={stone_type} />
+
         <Button variant="contained" onClick={() => setOpenMargin(true)} sx={{ bgcolor: '#1976d2', boxShadow: 'none' }}>MARGIN</Button>
         <Button variant="contained" onClick={() => setOpenUpload(true)} sx={{ bgcolor: '#1976d2', boxShadow: 'none' }}>IMPORT CSV</Button>
       </Box>
@@ -174,15 +140,6 @@ const DiamondPage = ({ stone_type = "" }) => {
         </Paper>
       )}
 
-      {/* DIALOGS & SNACKBAR */}
-      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
-        <DialogTitle>Confirm Delete</DialogTitle>
-        <DialogContent>Are you sure you want to delete selected items?</DialogContent>
-        <DialogActions>
-          <Button onClick={() => setConfirmOpen(false)}>Cancel</Button>
-          <Button onClick={() => { handleConfirmDelete(); setConfirmOpen(false); }} color="error">Delete</Button>
-        </DialogActions>
-      </Dialog>
       <Snackbar open={snackbar.open} autoHideDuration={3000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
         <Alert severity={snackbar.severity} variant="filled">{snackbar.message}</Alert>
       </Snackbar>

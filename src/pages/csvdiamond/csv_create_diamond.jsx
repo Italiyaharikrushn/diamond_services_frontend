@@ -1,83 +1,11 @@
-import React, { useState } from "react";
-import {
-  Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, Typography, Snackbar, Alert, LinearProgress
-} from "@mui/material";
+import React from "react";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, Typography, Snackbar, Alert, LinearProgress} from "@mui/material";
 import { useCreateDiamondsMutation } from "../../redux/api/diamondApi";
+import { useCSVUpload } from "../../utils/useCSVUpload";
 
 const DiamondCSVUploadDialog = ({ open, onClose }) => {
-  const [file, setFile] = useState(null);
-  const [createDiamonds, { isLoading }] = useCreateDiamondsMutation();
-  // Notification state
-  const [notification, setNotification] = useState({
-    open: false,
-    message: "",
-    severity: "info",
-  });
-
-  const handleCloseNotification = () => {
-    setNotification({ ...notification, open: false });
-  };
-
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile && selectedFile.type !== "text/csv") {
-      setNotification({
-        open: true,
-        message: "Only CSV files are allowed",
-        severity: "warning",
-      });
-      return;
-    }
-    setFile(selectedFile);
-  };
-
-  const handleUpload = async () => {
-    if (!file) {
-      setNotification({
-        open: true,
-        message: "Please select a CSV file first",
-        severity: "warning",
-      });
-      return;
-    }
-
-    const reader = new FileReader();
-
-    reader.onload = async (e) => {
-      const csvText = e.target.result;
-
-      try {
-        const res = await createDiamonds({ csv_data: csvText }).unwrap();
-
-        setNotification({
-          open: true,
-          message: res.message || "Operation successful",
-          severity: res.message === "Already exists" ? "info" : "success",
-        });
-
-        if (
-          res.message === "Already exists" ||
-          res.message === "CSV uploaded successfully"
-        ) {
-          setFile(null);
-        }
-
-        if (res.message === "Already exists" || "CSV uploaded successfully") {
-          setTimeout(() => onClose(true), 1500);
-        }
-
-      } catch (err) {
-        setNotification({
-          open: true,
-          message: err?.data?.detail || "Upload failed. Please try again.",
-          severity: "error",
-        });
-        setFile(null);
-      }
-    };
-
-    reader.readAsText(file);
-  };
+  const { file, isLoading, notification, handleFileChange, handleUpload, handleCloseNotification } = 
+    useCSVUpload(useCreateDiamondsMutation, onClose);
 
   return (
     <>
@@ -87,7 +15,6 @@ const DiamondCSVUploadDialog = ({ open, onClose }) => {
         </DialogTitle>
 
         <DialogContent>
-          {/* Progress Bar જ્યારે અપલોડ ચાલુ હોય */}
           {isLoading && <LinearProgress sx={{ mb: 2, borderRadius: 1 }} />}
 
           <Box
@@ -151,7 +78,6 @@ const DiamondCSVUploadDialog = ({ open, onClose }) => {
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar for Notifications */}
       <Snackbar
         open={notification.open}
         autoHideDuration={4000}

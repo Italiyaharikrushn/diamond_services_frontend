@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Dashboard from './dashbord';
-import GetDiamond from './csvdiamond/get_diamond';
 import Token from './token';
 
 function ProtectedRoutes() {
