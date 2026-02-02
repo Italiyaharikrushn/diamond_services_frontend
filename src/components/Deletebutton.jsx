@@ -46,8 +46,7 @@ export const DeleteData = ({ selectedIds, total, shopify_name, setSelectedIds, r
         variant="contained"
         disabled={selectedIds.length === 0}
         onClick={() => setConfirmOpen(true)}
-        color="inherit"
-        sx={{ boxShadow: 'none' }}
+        sx={{ bgcolor: '#d14f4f', boxShadow: 'none' }}
       >
         DELETE SELECTED
       </Button>

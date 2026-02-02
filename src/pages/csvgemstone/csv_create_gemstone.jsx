@@ -1,6 +1,6 @@
 import React from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, Typography, Snackbar, Alert, LinearProgress} from "@mui/material";
-import { useCreateGemstonesMutation } from "../../redux/api/gemstoneApi";
+import { useCreateGemstonesMutation } from "../../api/gemstoneApi";
 import { useCSVUpload } from "../../utils/useCSVUpload";
 
 const GemstoneCSVUploadDialog = ({ open, onClose, shopifyName }) => {

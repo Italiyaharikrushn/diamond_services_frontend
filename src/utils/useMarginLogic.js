@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import {useCreateMarginMutation, useGetMarginsQuery} from "../redux/api/marginApi";
+import {useCreateMarginMutation, useGetMarginsQuery} from "../api/marginApi";
 
 export const useMarginLogic = (open, onclose, onSuccess, defaultType, filterData) => {
     const [createMargin, { isLoading }] = useCreateMarginMutation();

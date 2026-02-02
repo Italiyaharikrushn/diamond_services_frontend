@@ -1,42 +1,21 @@
 import React, { useState } from "react";
-import { Container, Box, Tabs, Tab, Typography, Button } from "@mui/material";
-import LogoutIcon from "@mui/icons-material/Logout";
-import { useDispatch } from "react-redux";
-import { logout } from "../redux/authSlice";
+import { Box, Tabs, Tab } from "@mui/material";
 
-import DiamondPage from "./csvdiamond/get_diamond"; 
+import DiamondPage from "./csvdiamond/get_diamond";
 import GemstonePage from "./csvgemstone/get_gemstone";
 
 const Dashboard = () => {
-  const dispatch = useDispatch();
-  const [tabValue, setTabValue] = useState(0); 
+  const [tabValue, setTabValue] = useState(0);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
 
   return (
-    <Container maxWidth="xl" sx={{ mb: 4 }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2, mt: 4, alignItems: "center" }}>
-        <Typography variant="h4" sx={{ fontWeight: 800, fontSize: "2rem" }}>
-          Inventory Dashboard
-        </Typography>
-        <Button 
-          color="error" 
-          startIcon={<LogoutIcon />} 
-          onClick={() => { 
-            dispatch(logout()); 
-            window.location.href = "/";
-          }} 
-          sx={{ fontWeight: 600 }}
-        >
-          LOGOUT
-        </Button>
-      </Box>
-
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+    <>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
         <Tabs value={tabValue} onChange={handleTabChange} textColor="primary" indicatorColor="primary">
-          <Tab label="Diamonds" sx={{ fontWeight: 700 }} />
+          <Tab label="Lab Diamonds" sx={{ fontWeight: 700 }} />
           <Tab label="Gemstones" sx={{ fontWeight: 700 }} />
           <Tab label="Natural Diamonds" sx={{ fontWeight: 700 }} />
         </Tabs>
@@ -45,9 +24,9 @@ const Dashboard = () => {
       <Box sx={{ mt: 2 }}>
         {tabValue === 0 && <DiamondPage key="lab" stone_type="lab" />}
         {tabValue === 1 && <GemstonePage key="gem" stone_type="gemstone" />}
-        {tabValue === 2 && <DiamondPage key="natural" stone_type="natural" />} 
+        {tabValue === 2 && <DiamondPage key="natural" stone_type="natural" />}
       </Box>
-    </Container>
+    </>
   );
 };
 

@@ -1,4 +1,4 @@
-import { useGenrateMutation } from "../redux/api/loginApi";
+import { useGenrateMutation } from "../api/loginApi";
 import { useDispatch } from "react-redux";
 import { setToken } from "../redux/authSlice";
 import { useState } from "react";

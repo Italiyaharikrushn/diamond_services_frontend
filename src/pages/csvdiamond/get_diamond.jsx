@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { Alert, Box, Button, Paper, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
-import MarginDialog from "../margin/apply_margin";
-import Filterselects from "../../components/Select";
 import DeleteData from "../../components/Deletebutton";
+import Filterselects from "../../components/FilterSelects";
+import { useBulkDeleteDiamondsMutation, useDeleteAllDiamondsMutation, useGetAllDiamondsQuery, useGetDiamondFiltersQuery } from "../../api/diamondApi";
+import MarginDialog from "../margin/apply_margin";
 import DiamondCSVUploadDialog from "./csv_create_diamond";
-import { useGetAllDiamondsQuery, useGetDiamondFiltersQuery, useBulkDeleteDiamondsMutation, useDeleteAllDiamondsMutation } from "../../redux/api/diamondApi";
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, TablePagination, Snackbar, Alert } from "@mui/material";
 
 const DiamondPage = ({ stone_type = "" }) => {
   const [page, setPage] = useState(0);
@@ -18,8 +18,8 @@ const DiamondPage = ({ stone_type = "" }) => {
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
   const [filters, setFilters] = useState({
-    color: "",
-    clarity: "",
+    color: [],
+    clarity: [],
     price: [],
     carat: [],
   });
@@ -30,7 +30,7 @@ const DiamondPage = ({ stone_type = "" }) => {
 
   const { data, isLoading, refetch } = useGetAllDiamondsQuery({
     stone_type: stone_type.toLowerCase(),
-    color: filters.color || undefined,
+    color: Array.isArray(filters.color) && filters.color.length > 0 ? filters.color.join(",") : undefined,
     clarity: filters.clarity || undefined,
     price_min: filters.price[0],
     price_max: filters.price[1],
@@ -64,8 +64,8 @@ const DiamondPage = ({ stone_type = "" }) => {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ mb: 4 }}>
-      <Box sx={{ display: "flex", gap: 1.5, mb: 3, alignItems: "center", flexWrap: "wrap" }}>
+    <>
+      <Box sx={{ display: "flex", gap: 1.5, mb: 2, alignItems: "center", flexWrap: "wrap" }}>
 
         <Filterselects
           filters={{ ...filters, stone_type: stone_type }}
@@ -83,7 +83,7 @@ const DiamondPage = ({ stone_type = "" }) => {
       {isLoading ? (
         <Box sx={{ textAlign: 'center', py: 5 }}><Typography>Loading...</Typography></Box>
       ) : diamonds.length === 0 ? (
-        <Paper sx={{ p: 10, textAlign: 'center', bgcolor: '#f9f9f9', borderRadius: "8px", border: '1px solid #eee' }}>
+        <Paper sx={{ textAlign: 'center', bgcolor: '#f9f9f9', borderRadius: "8px", border: '1px solid #eee' }}>
           <Typography variant="h5" color="textSecondary" sx={{ fontWeight: 600 }}>
             Data Not Found for {(stone_type || "").toUpperCase()}
           </Typography>
@@ -108,13 +108,13 @@ const DiamondPage = ({ stone_type = "" }) => {
               </TableHead>
               <TableBody>
                 {paginatedDiamonds.map((d) => (
-                  <TableRow key={d.id} sx={{ "& td": { py: 2, fontSize: '0.85rem' }, "&:hover": { bgcolor: '#fafafa' } }}>
+                  <TableRow key={d.id} sx={{ "& td": { py: 1.6, fontSize: '0.85rem' }, "&:hover": { bgcolor: '#fafafa' } }}>
                     <TableCell padding="checkbox"><Checkbox checked={selectedIds.includes(d.id)} onChange={() => handleSelectOne(d.id)} /></TableCell>
                     <TableCell>
                       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                         <Box
                           component="img"
-                          src={d.image_source}
+                          src={d.image_source || ""}
                           alt={d.certificate_no}
                           sx={{ width: 36, height: 36, borderRadius: "20%" }}
                         />
@@ -145,7 +145,7 @@ const DiamondPage = ({ stone_type = "" }) => {
       </Snackbar>
       <DiamondCSVUploadDialog open={openUpload} onClose={(shouldRefetch) => { setOpenUpload(false); if (shouldRefetch === true) { refetch(); } }} defaultType={stone_type} />
       <MarginDialog open={openMargin} onclose={() => setOpenMargin(false)} onSuccess={() => refetch()} defaultType={stone_type === "lab" ? "lab" : "natural"} filterData={filterRes?.data} />
-    </Container>
+    </>
   );
 };
 

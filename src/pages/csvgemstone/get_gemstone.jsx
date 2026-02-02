@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, TablePagination, Snackbar, Alert } from "@mui/material";
+import { Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, TablePagination, Snackbar, Alert } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
-import { useGetAllGemstonesQuery, useGetGemstoneFiltersQuery, useBulkDeleteGemstonesMutation, useDeleteAllGemstonesMutation } from "../../redux/api/gemstoneApi";
+import { useGetAllGemstonesQuery, useGetGemstoneFiltersQuery, useBulkDeleteGemstonesMutation, useDeleteAllGemstonesMutation } from "../../api/gemstoneApi";
 import GemstoneCSVUploadDialog from "./csv_create_gemstone";
 import MarginDialog from "../margin/apply_margin";
-import Filterselects from "../../components/Select";
+import Filterselects from "../../components/FilterSelects";
 import DeleteData from "../../components/Deletebutton";
 
 const GemstonePage = ({ category = "" }) => {
@@ -16,8 +16,8 @@ const GemstonePage = ({ category = "" }) => {
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
   const [filters, setFilters] = useState({
-    color: "",
-    clarity: "",
+    color: [],
+    clarity: [],
     price: [0, 0],
     carat: [0, 0],
     stone_type: category || ""
@@ -30,9 +30,9 @@ const GemstonePage = ({ category = "" }) => {
   const [bulkDelete] = useBulkDeleteGemstonesMutation();
   const [deleteAll] = useDeleteAllGemstonesMutation();
 
-  const { data, isLoading, refetch } = useGetAllGemstonesQuery({
+  const { data, isLoading, isFetching, refetch } = useGetAllGemstonesQuery({
     stone_type: filters.stone_type || undefined,
-    color: filters.color || undefined,
+    color: Array.isArray(filters.color) && filters.color.length > 0 ? filters.color.join(",") : undefined,
     clarity: filters.clarity || undefined,
     min_price: filters.price[0],
     max_price: filters.price[1],
@@ -41,6 +41,8 @@ const GemstonePage = ({ category = "" }) => {
     page: page + 1,
     limit: rowsPerPage
   });
+
+  const loading = isLoading || isFetching;
 
   useEffect(() => {
     if (filterRes?.data) {
@@ -66,8 +68,8 @@ const GemstonePage = ({ category = "" }) => {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ mb: 4 }}>
-      <Box sx={{ display: "flex", gap: 1.5, mb: 3, alignItems: "center", flexWrap: "wrap" }}>
+    <>
+      <Box sx={{ display: "flex", gap: 1.5, mb: 2, alignItems: "center", flexWrap: "wrap" }}>
         <Filterselects
           filters={filters}
           setFilters={setFilters}
@@ -79,8 +81,14 @@ const GemstonePage = ({ category = "" }) => {
         <Button variant="contained" onClick={() => setOpenUpload(true)} sx={{ bgcolor: '#1976d2', boxShadow: 'none' }}>IMPORT CSV</Button>
       </Box>
 
-      {isLoading ? (
+      {loading ? (
         <Box sx={{ textAlign: 'center', py: 5 }}><Typography>Loading...</Typography></Box>
+      ) : gemstones.length === 0 ? (
+        <Paper sx={{ textAlign: 'center', p: 5, bgcolor: '#f9f9f9', borderRadius: "8px" }}>
+          <Typography variant="h5" color="textSecondary" sx={{ fontWeight: 600 }}>
+            Data Not Found for {(category || "").toUpperCase()}
+          </Typography>
+        </Paper>
       ) : (
         <Paper sx={{ borderRadius: "8px", border: '1px solid #eee', boxShadow: 'none', overflow: 'hidden' }}>
           <TableContainer>
@@ -101,13 +109,13 @@ const GemstonePage = ({ category = "" }) => {
               </TableHead>
               <TableBody>
                 {paginatedGemstones.map((d) => (
-                  <TableRow key={d.id} sx={{ "& td": { py: 2, fontSize: '0.85rem' }, "&:hover": { bgcolor: '#fafafa' } }}>
+                  <TableRow key={d.id} sx={{ "& td": { py: 1.6, fontSize: '0.85rem' }, "&:hover": { bgcolor: '#fafafa' } }}>
                     <TableCell padding="checkbox"><Checkbox checked={selectedIds.includes(d.id)} onChange={() => handleSelectOne(d.id)} /></TableCell>
                     <TableCell>
                       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                         <Box
                           component="img"
-                          src={d.image_source}
+                          src={d.image_source || "https://360diamondvideo.com/media/JO-4082/JO-4082.jpg"}
                           alt={d.certificate_no}
                           sx={{ width: 36, height: 36, borderRadius: "20%" }}
                         />
@@ -138,7 +146,7 @@ const GemstonePage = ({ category = "" }) => {
       </Snackbar>
       <GemstoneCSVUploadDialog open={openUpload} onClose={() => setOpenUpload(false)} shopifyName={gemstones[0]?.shopify_name} />
       <MarginDialog open={openMargin} onclose={() => setOpenMargin(false)} onSuccess={() => refetch()} defaultType="gemstones" filterData={filterRes?.data} />
-    </Container>
+    </>
   );
 };
 

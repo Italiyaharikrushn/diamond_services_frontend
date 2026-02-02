@@ -1,6 +1,6 @@
 import React from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, Typography, Snackbar, Alert, LinearProgress} from "@mui/material";
-import { useCreateDiamondsMutation } from "../../redux/api/diamondApi";
+import { useCreateDiamondsMutation } from "../../api/diamondApi";
 import { useCSVUpload } from "../../utils/useCSVUpload";
 
 const DiamondCSVUploadDialog = ({ open, onClose }) => {
