@@ -5,6 +5,7 @@ import SortableList from "../../components/SortableList";
 import { Box, Typography, Paper, Checkbox, FormControlLabel, Grid, Stack, TextField, Switch } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { updateSettingByPath } from "../../redux/settingsSlice";
+import { SettingRow } from "../../components/SettingRow";
 
 const Products = () => {
     const dispatch = useDispatch();
@@ -82,134 +83,107 @@ const Products = () => {
             </Paper>
 
             {isExpanded && (
-                <Stack spacing={4}>
-                    <Grid container>
-                        <Grid item xs={12} md={4}>
-                            <Typography fontWeight="bold">Page Title</Typography>
-                        </Grid>
-                        <Grid item xs={12} md={8}>
-                            <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
-                                <RichTextEditor 
-                                    value={ringSettings?.page_title || ""} 
-                                    onChange={(val) => handleUpdate("page_title", val)}
-                                />
-                            </Paper>
-                        </Grid>
-                    </Grid>
-
-                    <Grid container>
-                        <Grid item xs={12} md={4}>
-                            <Typography fontWeight="bold">Metals Options</Typography>
-                        </Grid>
-                        <Grid item xs={12} md={8}>
-                            <SortableList
-                                items={ringSettings?.metals || []}
-                                onReorder={handleMetalReorder}
-                                onCheckboxChange={handleMetalCheckbox}
+                <Box>
+                    <SettingRow title="Page Title" isTopAligned={true}>
+                        <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
+                            <RichTextEditor 
+                                value={ringSettings?.page_title || ""} 
+                                onChange={(val) => handleUpdate("page_title", val)}
                             />
-                        </Grid>
-                    </Grid>
+                        </Paper>
+                    </SettingRow>
 
-                    <Grid container>
-                        <Grid item xs={12} md={4}>
-                            <Typography fontWeight="bold">Style Options</Typography>
-                        </Grid>
-                        <Grid item xs={12} md={8}>
-                            <SortableList
-                                items={ringSettings?.styles || []}
-                                onReorder={handleStyleReorder}
-                                onCheckboxChange={handleStyleCheckbox}
+                    <SettingRow title="Metals Options" isTopAligned={true}>
+                        <SortableList
+                            items={ringSettings?.metals || []}
+                            onReorder={handleMetalReorder}
+                            onCheckboxChange={handleMetalCheckbox}
+                        />
+                    </SettingRow>
+
+                    <SettingRow title="Style Options" isTopAligned={true}>
+                        <SortableList
+                            items={ringSettings?.styles || []}
+                            onReorder={handleStyleReorder}
+                            onCheckboxChange={handleStyleCheckbox}
+                        />
+                    </SettingRow>
+
+                    <SettingRow title="Add to Cart Settings">
+                        <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox 
+                                        checked={ringSettings?.show_add_to_cart || false} 
+                                        onChange={(e) => handleUpdate("show_add_to_cart", e.target.checked)} 
+                                    />
+                                }
+                                label="Do you want to show add to cart on listing page?"
                             />
-                        </Grid>
-                    </Grid>
+                        </Paper>
+                    </SettingRow>
 
-                    <Grid container>
-                        <Grid item xs={12} md={4}>
-                            <Typography fontWeight="bold">Add to Cart Settings</Typography>
-                        </Grid>
-                        <Grid item xs={12} md={8}>
-                            <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox 
-                                            checked={ringSettings?.show_add_to_cart || false} 
-                                            onChange={(e) => handleUpdate("show_add_to_cart", e.target.checked)} 
+                    <SettingRow title="Filters" subtitle="Manage price and category filters" isTopAligned={true}>
+                        <Stack spacing={2}>
+                            {ringSettings?.filters?.map((filter) => (
+                                <Paper key={filter.id} variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
+                                    <Box display="flex" justifyContent="space-between" alignItems="center">
+                                        <Typography fontWeight="600">{filter.label}</Typography>
+                                        <Switch
+                                            checked={filter.enabled}
+                                            onChange={() => handleFilterToggle(filter.id)}
+                                            color="primary"
+                                            size="small"
                                         />
-                                    }
-                                    label="Do you want to show add to cart on listing page?"
-                                />
-                            </Paper>
-                        </Grid>
-                    </Grid>
+                                    </Box>
 
-                    <Grid container>
-                        <Grid item xs={12} md={4}>
-                            <Typography fontWeight="bold">Filters</Typography>
-                        </Grid>
-                        <Grid item xs={12} md={8}>
-                            <Stack spacing={2}>
-                                {ringSettings?.filters?.map((filter) => (
-                                    <Paper key={filter.id} variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
-                                        <Box display="flex" justifyContent="space-between" alignItems="center">
-                                            <Typography fontWeight="600">{filter.label}</Typography>
-                                            <Switch
-                                                checked={filter.enabled}
-                                                onChange={() => handleFilterToggle(filter.id)}
-                                                color="primary"
+                                    {filter.enabled && filter.values && !Array.isArray(filter.values) && (
+                                        <Grid container spacing={2} sx={{ mt: 1 }}>
+                                            <Grid item xs={6}>
+                                                <TextField
+                                                    label="Min Price"
+                                                    type="number"
+                                                    fullWidth
+                                                    size="small"
+                                                    value={filter.values.min}
+                                                    onChange={(e) => handleFilterValueChange(filter.id, 'min', e.target.value)}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <TextField
+                                                    label="Max Price"
+                                                    type="number"
+                                                    fullWidth
+                                                    size="small"
+                                                    value={filter.values.max}
+                                                    onChange={(e) => handleFilterValueChange(filter.id, 'max', e.target.value)}
+                                                />
+                                            </Grid>
+                                        </Grid>
+                                    )}
+
+                                    {filter.enabled && Array.isArray(filter.values) && (
+                                        <Box sx={{ mt: 2 }}>
+                                            <TextField
+                                                label={filter.label}
                                                 size="small"
+                                                fullWidth
+                                                value={filter.values.join(", ")}
+                                                onChange={(e) =>
+                                                    handleFilterValueChange(
+                                                        filter.id,
+                                                        null,
+                                                        e.target.value.split(",").map(v => v.trim())
+                                                    )
+                                                }
                                             />
                                         </Box>
-
-                                        {filter.enabled && filter.values && !Array.isArray(filter.values) && (
-                                            <Grid container spacing={2} sx={{ mt: 1 }}>
-                                                <Grid item xs={6}>
-                                                    <TextField
-                                                        label="Min Price"
-                                                        type="number"
-                                                        fullWidth
-                                                        size="small"
-                                                        value={filter.values.min}
-                                                        onChange={(e) => handleFilterValueChange(filter.id, 'min', e.target.value)}
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={6}>
-                                                    <TextField
-                                                        label="Max Price"
-                                                        type="number"
-                                                        fullWidth
-                                                        size="small"
-                                                        value={filter.values.max}
-                                                        onChange={(e) => handleFilterValueChange(filter.id, 'max', e.target.value)}
-                                                    />
-                                                </Grid>
-                                            </Grid>
-                                        )}
-
-                                        {filter.enabled && Array.isArray(filter.values) && (
-                                            <Grid container spacing={2} sx={{ mt: 1 }}>
-                                                <Grid item xs={12}>
-                                                    <TextField
-                                                        label={filter.label}
-                                                        size="small"
-                                                        fullWidth
-                                                        value={filter.values.join(", ")}
-                                                        onChange={(e) =>
-                                                            handleFilterValueChange(
-                                                                filter.id,
-                                                                null,
-                                                                e.target.value.split(",").map(v => v.trim())
-                                                            )
-                                                        }
-                                                    />
-                                                </Grid>
-                                            </Grid>
-                                        )}
-                                    </Paper>
-                                ))}
-                            </Stack>
-                        </Grid>
-                    </Grid>
-                </Stack>
+                                    )}
+                                </Paper>
+                            ))}
+                        </Stack>
+                    </SettingRow>
+                </Box>
             )}
         </Box>
     );

@@ -1,40 +1,21 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Dashboard from '../pages/dashbord';
 import Settings from '../pages/settings';
-import Token from '../pages/token';
 
 function ProtectedRoutes() {
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   return (
-    <Router>
-      {isAuthenticated && <Sidebar />}
-      <div className="app-container">
+    <div style={{ display: 'flex' }}>
+      <Sidebar />
+      <div className="app-container" style={{ flexGrow: 1 }}>
         <Routes>
-          {/* Public route */}
-          <Route
-            path="/"
-            element={isAuthenticated ? <Navigate to="/stones" /> : <Token />}
-          />
-
-          {/* Protected dashboard routes */}
-          <Route
-            path="/stones"
-            element={isAuthenticated ? <Dashboard /> : <Navigate to="/" />}
-          />
-
-          {/* Protected settings route */}
-          <Route
-            path="/settings"
-            element={isAuthenticated ? <Settings /> : <Navigate to="/" />}
-          />
-
-          {/* Redirect all unmatched routes */}
-          <Route path="*" element={<Navigate to={isAuthenticated ? "/stones" : "/"} />} />
+          <Route path="/stones" element={<Dashboard />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/" element={<Navigate to="/stones" replace />} />
+          <Route path="*" element={<Navigate to="/stones" replace />} />
         </Routes>
       </div>
-    </Router>
+    </div>
   );
 }
 

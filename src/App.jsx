@@ -1,12 +1,12 @@
-import ProtectedRoutes from './routes/ProtectedRoutes';
+import AppRoutes from './routes/AppRoutes';
 import './App.css';
 
 function App() {
   return (
     <div className="app-wrapper">
-      <ProtectedRoutes />
+      <AppRoutes />
     </div>
-  )
+  );
 }
 
 export default App;

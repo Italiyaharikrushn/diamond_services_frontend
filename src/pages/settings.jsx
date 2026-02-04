@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Box, Tabs, Tab, Container, Button } from "@mui/material";
 import ComplateRing from "./complate/ComplateRing";
 import Gemstones from "./complate/gemsrones";
@@ -14,7 +14,6 @@ const Settings = () => {
     const { saveSettings, isSaving } = useSettings();
     const settings = useSelector((state) => state.settings.settings);
 
-
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
     };
@@ -25,7 +24,7 @@ const Settings = () => {
 
     return (
         <>
-            <Box sx={{ borderBottom: 1, borderColor: "divider", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Box sx={{ borderBottom: 1, borderColor: "divider", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
                 <Tabs
                     value={tabValue}
                     onChange={handleTabChange}
