@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Typography, Paper, Checkbox, TextField, FormControlLabel } from "@mui/material";
+import { Box, Typography, Paper, Checkbox, TextField, FormControlLabel, Divider } from "@mui/material";
 import { DropdownIcon } from "../../components/dropdown";
 import { useDispatch, useSelector } from "react-redux";
 import { updateSettingByPath } from "../../redux/settingsSlice";
@@ -12,7 +12,7 @@ const ComplateRing = () => {
     const settings = useSelector((state) => state.settings.settings);
 
     console.log("-----Settings--------", settings);
-    
+
     const showRingSize = settings?.complete_ring?.show_ring_size;
     const ringSizeValues = settings?.complete_ring?.size_values;
     const showEngravings = settings?.complete_ring?.show_engravings;
@@ -39,9 +39,9 @@ const ComplateRing = () => {
             </Paper>
 
             {isExpanded && (
-                <Box sx={{ px: 1 }}>
-                    <SettingRow 
-                        title="Add Ring Sizes" 
+                <Box>
+                    <SettingRow
+                        title="Add Ring Sizes"
                         isTopAligned={true}
                     >
                         <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
@@ -73,8 +73,10 @@ const ComplateRing = () => {
                         </Paper>
                     </SettingRow>
 
-                    <SettingRow 
-                        title="Give Engravings Options" 
+                    <Divider sx={{ my: 4 }} />
+
+                    <SettingRow
+                        title="Give Engravings Options"
                         subtitle="This will be shown as text-box on complete ring page"
                         isTopAligned={true}
                     >

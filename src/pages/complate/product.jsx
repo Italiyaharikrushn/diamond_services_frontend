@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { DropdownIcon } from "../../components/dropdown";
 import RichTextEditor from "../../components/RichTextEditor";
 import SortableList from "../../components/SortableList";
-import { Box, Typography, Paper, Checkbox, FormControlLabel, Grid, Stack, TextField, Switch } from "@mui/material";
+import { Box, Typography, Paper, Checkbox, FormControlLabel, Grid, Stack, TextField, Switch, Divider } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { updateSettingByPath } from "../../redux/settingsSlice";
 import { SettingRow } from "../../components/SettingRow";
@@ -93,6 +93,8 @@ const Products = () => {
                         </Paper>
                     </SettingRow>
 
+                    <Divider sx={{ my: 4 }} />
+
                     <SettingRow title="Metals Options" isTopAligned={true}>
                         <SortableList
                             items={ringSettings?.metals || []}
@@ -101,6 +103,8 @@ const Products = () => {
                         />
                     </SettingRow>
 
+                    <Divider sx={{ my: 4 }} />
+
                     <SettingRow title="Style Options" isTopAligned={true}>
                         <SortableList
                             items={ringSettings?.styles || []}
@@ -108,6 +112,8 @@ const Products = () => {
                             onCheckboxChange={handleStyleCheckbox}
                         />
                     </SettingRow>
+
+                    <Divider sx={{ my: 4 }} />
 
                     <SettingRow title="Add to Cart Settings">
                         <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
@@ -122,6 +128,8 @@ const Products = () => {
                             />
                         </Paper>
                     </SettingRow>
+
+                    <Divider sx={{ my: 4 }} />
 
                     <SettingRow title="Filters" subtitle="Manage price and category filters" isTopAligned={true}>
                         <Stack spacing={2}>
