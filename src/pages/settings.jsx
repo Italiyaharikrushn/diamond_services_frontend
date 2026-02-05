@@ -31,12 +31,12 @@ const Settings = () => {
                     textColor="primary"
                     indicatorColor="primary"
                 >
-                    <Tab label="General" sx={{ fontWeight: 548 }} />
-                    <Tab label="Diamonds" sx={{ fontWeight: 548 }} />
-                    <Tab label="Gemstones" sx={{ fontWeight: 548 }} />
-                    <Tab label="Stone Appearance" sx={{ fontWeight: 548 }} />
-                    <Tab label="Products" sx={{ fontWeight: 548 }} />
-                    <Tab label="Complete Ring" sx={{ fontWeight: 548 }} />
+                    <Tab label="General" sx={{ fontWeight: 700 }} />
+                    <Tab label="Diamonds" sx={{ fontWeight: 700 }} />
+                    <Tab label="Gemstones" sx={{ fontWeight: 700 }} />
+                    <Tab label="Stone Appearance" sx={{ fontWeight: 700 }} />
+                    <Tab label="Products" sx={{ fontWeight: 700 }} />
+                    <Tab label="Complete Ring" sx={{ fontWeight: 700 }} />
                 </Tabs>
 
                 {/* Save Button */}
