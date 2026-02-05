@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Typography, Paper, Stack, Divider } from "@mui/material";
+import { Box, Typography, Paper, Divider } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { updateSettingByPath } from "../../redux/settingsSlice";
 
