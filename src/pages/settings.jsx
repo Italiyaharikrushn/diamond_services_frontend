@@ -31,12 +31,12 @@ const Settings = () => {
                     textColor="primary"
                     indicatorColor="primary"
                 >
-                    <Tab label="General" sx={{ fontWeight: 700 }} />
-                    <Tab label="Diamonds" sx={{ fontWeight: 700 }} />
-                    <Tab label="Gemstones" sx={{ fontWeight: 700 }} />
-                    <Tab label="Stone Appearance" sx={{ fontWeight: 700 }} />
-                    <Tab label="Products" sx={{ fontWeight: 700 }} />
-                    <Tab label="Complete Ring" sx={{ fontWeight: 700 }} />
+                    <Tab label="General" sx={{ fontWeight: 548 }} />
+                    <Tab label="Diamonds" sx={{ fontWeight: 548 }} />
+                    <Tab label="Gemstones" sx={{ fontWeight: 548 }} />
+                    <Tab label="Stone Appearance" sx={{ fontWeight: 548 }} />
+                    <Tab label="Products" sx={{ fontWeight: 548 }} />
+                    <Tab label="Complete Ring" sx={{ fontWeight: 548 }} />
                 </Tabs>
 
                 {/* Save Button */}
@@ -45,7 +45,7 @@ const Settings = () => {
                     onClick={handleSave}
                     disabled={isSaving}
                 >
-                    {isSaving ? "Saving..." : "Save Settings"}
+                    {isSaving ? "Saving..." : "Save Setting"}
                 </Button>
             </Box>
 
@@ -54,7 +54,6 @@ const Settings = () => {
                     {tabValue === 0 && <General />}
                     {tabValue === 1 && <Diamonds />}
                     {tabValue === 2 && <Gemstones />}
-                    {/* {tabValue === 3 && <div>he</div>} */}
                     {tabValue === 3 && <Appearance />}
                     {tabValue === 4 && <Products />}
                     {tabValue === 5 && <ComplateRing />}

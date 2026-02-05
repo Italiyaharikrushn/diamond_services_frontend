@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { defaultSettings } from "../utils/defualtSetting";
 
 function setDeepValue(obj, path, value) {
     const keys = path
@@ -32,7 +33,7 @@ const settingsSlice = createSlice({
             state.success = false;
         },
         setSettings: (state, action) => {
-            state.settings = action.payload;
+            state.settings = action.payload && Object.keys(action.payload).length > 0 ? action.payload : defaultSettings;
             state.loading = false;
         },
         updateSettingByPath: (state, action) => {
