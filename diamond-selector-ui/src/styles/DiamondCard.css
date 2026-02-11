@@ -1,0 +1,53 @@
+.diamond-card-ui {
+  width: 250px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #fff;
+}
+
+.diamond-image-box {
+  background: #f3f4f6;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.diamond-image-box img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.diamond-info {
+  padding: 12px;
+}
+
+.diamond-title-row {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.price {
+  font-weight: 700;
+}
+
+.diamond-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.diamond-meta div {
+  text-align: center;
+}
+
+.diamond-meta strong {
+  display: block;
+  color: #111827;
+}

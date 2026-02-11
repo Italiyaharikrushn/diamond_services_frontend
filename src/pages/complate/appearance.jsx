@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Typography, Paper, Divider } from "@mui/material";
+import { Box, Typography, Paper, Divider, FormLabel, RadioGroup, FormControlLabel, Radio, Select, MenuItem, Pagination } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { updateSettingByPath } from "../../redux/settingsSlice";
 
@@ -17,6 +17,7 @@ const Appearance = () => {
   console.log("-------settings-----", settings);
   const listingPage = settings?.stone_appearance?.listing_page;
   const viewPage = settings?.stone_appearance?.view_page;
+  const resultStyle = listingPage?.result_style || "paginated";
 
   const handleUpdate = (path, value) => {
     dispatch(updateSettingByPath({ path, value }));
@@ -82,6 +83,73 @@ const Appearance = () => {
                 onChange={(val) => handleUpdate("stone_appearance.view_page.stone_title", val)}
                 minHeight={80}
               />
+            </Paper>
+          </SettingRow>
+
+          <Divider sx={{ my: 4 }} />
+
+          <SettingRow title="Pagination Options">
+            <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
+              <Box display="flex" gap={4}>
+
+                <Box flex={1}>
+                  <FormLabel sx={{ mb: 1, display: "block", fontWeight: 500 }}>
+                    Select result style
+                  </FormLabel>
+
+                  <RadioGroup value={resultStyle} onChange={(e) => handleUpdate("stone_appearance.listing_page.result_style", e.target.value)}>
+                    <FormControlLabel
+                      value="paginated"
+                      control={<Radio />}
+                      label="Paginated"
+                    />
+                    <FormControlLabel
+                      value="infinite"
+                      control={<Radio />}
+                      label="Infinite Scroll"
+                    />
+                  </RadioGroup>
+
+                  {resultStyle === "paginated" && (
+                    <>
+                      <Typography sx={{ mt: 2, mb: 1, fontWeight: 500 }}>
+                        Select pagination style
+                      </Typography>
+
+                      <Select fullWidth size="small" value={1}>
+                        <MenuItem value={1}>Pagination 1</MenuItem>
+                      </Select>
+                    </>
+                  )}
+                </Box>
+
+                <Box
+                  flex={1}
+                  display="flex"
+                  flexDirection="column"
+                  justifyContent="end"
+                >
+                  <Typography sx={{ mb: 1, fontWeight: 500 }}>
+                    Preview:
+                  </Typography>
+
+                  {resultStyle === "paginated" ? (
+                    <Pagination
+                      count={10}
+                      page={1}
+                      siblingCount={1}
+                      boundaryCount={1}
+                      showFirstButton={false}
+                      showLastButton={false}
+                    />
+                  ) : (
+                    <Typography sx={{ color: "text.secondary", fontSize: 14 }}>
+                      Infinite scroll preview (loads on scroll)
+                    </Typography>
+                  )}
+                </Box>
+
+              </Box>
             </Paper>
           </SettingRow>
 

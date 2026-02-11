@@ -28,6 +28,40 @@ const General = () => {
     return (
         <Box>
             <SettingRow
+                title="Stone Types"
+                subtitle="Enable or disable stone categories"
+            >
+                <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
+                    <Stack direction="row" spacing={2}>
+                        {stoneConfig?.stone_types?.map((stone) => (
+                            <FormControlLabel
+                                key={stone.id}
+                                control={
+                                    <Checkbox
+                                        checked={stone.enabled || false}
+                                        onChange={() => handleToggleStone(stone.id)}
+                                        color="primary"
+                                    />
+                                }
+                                label={stone.label}
+                            />
+                        ))}
+                    </Stack>
+                </Paper>
+            </SettingRow>
+
+            {stoneConfig?.stone_types?.map((stone) =>
+                <StoneConfigRow
+                    key={`config-${stone.id}`}
+                    stone={stone}
+                    stoneConfig={stoneConfig}
+                    onUpdate={handleUpdate}
+                />
+            )}
+
+            <Divider sx={{ mb: 3, my: 3 }} />
+
+            <SettingRow
                 title="Feature Title"
                 subtitle="Display title for general features"
                 isTopAligned={true}
@@ -67,39 +101,9 @@ const General = () => {
                 </Paper>
             </SettingRow>
 
-            <Divider sx={{ mb: 3, my: 3 }} />
 
-            <SettingRow
-                title="Stone Types"
-                subtitle="Enable or disable stone categories"
-            >
-                <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
-                    <Stack direction="row" spacing={2}>
-                        {stoneConfig?.stone_types?.map((stone) => (
-                            <FormControlLabel
-                                key={stone.id}
-                                control={
-                                    <Checkbox
-                                        checked={stone.enabled || false}
-                                        onChange={() => handleToggleStone(stone.id)}
-                                        color="primary"
-                                    />
-                                }
-                                label={stone.label}
-                            />
-                        ))}
-                    </Stack>
-                </Paper>
-            </SettingRow>
 
-            {stoneConfig?.stone_types?.map((stone) =>
-                <StoneConfigRow 
-                    key={`config-${stone.id}`} 
-                    stone={stone} 
-                    stoneConfig={stoneConfig} 
-                    onUpdate={handleUpdate} 
-                />
-            )}
+
 
             <Divider sx={{ my: 3 }} />
 

@@ -1,0 +1,25 @@
+import React from "react";
+import StoneCard from "./StoneCard";
+import { Grid } from "@mui/material";
+
+const DiamondList = ({ diamonds }) => {
+    const list = Array.isArray(diamonds) ? diamonds : diamonds?.data || [];
+
+    if (!list.length) return <p>No diamonds found for this store.</p>;
+
+    return (
+        <div
+            style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(270px, 1fr))",
+                gap: 16,
+            }}
+        >
+            {list.map((diamond, index) => (
+                <StoneCard key={diamond.id || index} item={diamond} />
+            ))}
+        </div>
+    );
+};
+
+export default DiamondList;
