@@ -1,4 +1,4 @@
-import { useGenrateMutation } from "../api/loginApi";
+import { useGenerateMutation } from "../api/loginApi";
 import { useDispatch } from "react-redux";
 import { setToken } from "../redux/authSlice";
 import { useState } from "react";
@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Container, Paper, Button, Typography, Box, Alert, CircularProgress, TextField } from "@mui/material";
 
 const Token = () => {
-  const [generateToken, { isLoading }] = useGenrateMutation();
+  const [generateToken, { isLoading }] = useGenerateMutation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [storeName, setStoreName] = useState("");

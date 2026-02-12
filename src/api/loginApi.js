@@ -5,7 +5,7 @@ export const loginApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_BaseURL }),
   tagTypes: ["login"],
   endpoints: (builder) => ({
-    genrate: builder.mutation({
+    generate: builder.mutation({
       query: (useData) => ({
         url: '/token/generate-token',
         method: 'POST',
@@ -16,4 +16,4 @@ export const loginApi = createApi({
   }),
 });
 
-export const { useGenrateMutation } = loginApi;
+export const { useGenerateMutation } = loginApi;
