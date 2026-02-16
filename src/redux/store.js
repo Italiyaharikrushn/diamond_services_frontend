@@ -1,9 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { loginApi } from '../api/loginApi';
 import authReducer from  './authSlice';
 import marginReducer from "./marginSlice";
 import gemstoneReducer from "./gemstoneSlice";
 import settingsReducer from "./settingsSlice";
+import { loginApi } from '../api/loginApi';
 import { diamondApi } from '../api/diamondApi';
 import { gemstoneApi } from '../api/gemstoneApi';
 import { marginApi } from '../api/marginApi';

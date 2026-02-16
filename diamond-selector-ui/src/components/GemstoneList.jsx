@@ -1,6 +1,5 @@
 import React from "react";
 import StoneCard from "./StoneCard";
-import { Grid } from "@mui/material";
 
 const GemstoneList = ({ gemstones }) => {
     const list = Array.isArray(gemstones) ? gemstones : gemstones?.data || [];

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Box, Typography, Paper, Checkbox, TextField, FormControlLabel, Divider } from "@mui/material";
+import { SettingRow } from "../../components/SettingRow";
 import { DropdownIcon } from "../../components/dropdown";
 import { useDispatch, useSelector } from "react-redux";
 import { updateSettingByPath } from "../../redux/settingsSlice";
-import { SettingRow } from "../../components/SettingRow";
 
 const ComplateRing = () => {
     const dispatch = useDispatch();

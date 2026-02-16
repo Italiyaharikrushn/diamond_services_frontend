@@ -1,5 +1,5 @@
-import { Box, Slider } from '@mui/material';
 import React, { useState } from 'react'
+import { Box, Slider } from '@mui/material';
 import FilterAccordion from './FilterAccordion';
 
 function FluorescenceFilter() {

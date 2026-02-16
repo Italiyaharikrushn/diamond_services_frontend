@@ -1,13 +1,13 @@
 import { Box, Pagination, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import "../styles/stones.css";
+import { useDiamonds } from "../hooks/useDiamonds";
+import { useGemstones } from "../hooks/useGemstones";
+import { useSettings } from "../hooks/useSettings";
+import Loader from "../components/Loader";
 import DiamondList from "../components/DiamondList";
 import FilterSlider from "../components/FilterSlider";
 import GemstoneList from "../components/GemstoneList";
-import { useDiamonds } from "../hooks/useDiamonds";
-import { useGemstones } from "../hooks/useGemstones";
-import "../styles/stones.css";
-import { useSettings } from "../hooks/useSettings";
-import Loader from "../components/Loader";
 import CaratFilter from "../components/CaratFilter";
 import ClarityFilter from "../components/ClarityFilter";
 import PriceFilter from "../components/PriceFilter";

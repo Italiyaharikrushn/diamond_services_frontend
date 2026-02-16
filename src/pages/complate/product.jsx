@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { DropdownIcon } from "../../components/dropdown";
-import RichTextEditor from "../../components/RichTextEditor";
-import SortableList from "../../components/SortableList";
 import { Box, Typography, Paper, Checkbox, FormControlLabel, Grid, Stack, TextField, Switch, Divider } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { updateSettingByPath } from "../../redux/settingsSlice";
+import { DropdownIcon } from "../../components/dropdown";
+import RichTextEditor from "../../components/RichTextEditor";
+import SortableList from "../../components/SortableList";
 import { SettingRow } from "../../components/SettingRow";
 
 const Products = () => {

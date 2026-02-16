@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
+import { useSlider } from "../hooks/useSlider";
 import { useSettings } from "../hooks/useSettings";
 import { Box, IconButton } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { useSlider } from "../hooks/useSlider";
 
 const FilterSlider = ({ stoneOrigin, onChange }) => {
     const storeId = "test-store.myshopify.com";

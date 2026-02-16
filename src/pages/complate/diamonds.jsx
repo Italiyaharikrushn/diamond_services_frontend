@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Box, Typography, Paper, Divider } from "@mui/material";
-import { DropdownIcon } from "../../components/dropdown";
-import SortableList from "../../components/SortableList";
-import { SettingRow } from "../../components/SettingRow";
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 
 // Hooks & Components
 import ImageEditDialog from "../../components/ImageEditDialog";
 import FilterSection from "../../components/FilterSection";
+import { DropdownIcon } from "../../components/dropdown";
+import SortableList from "../../components/SortableList";
+import { SettingRow } from "../../components/SettingRow";
 import { useSettingsManager } from "../../utils/useSettingsManager";
 
 const Diamonds = () => {

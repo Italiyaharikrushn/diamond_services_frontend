@@ -1,8 +1,8 @@
 import React from 'react'
-// import "../styles/stones.css";
+import { Box } from '@mui/material';
 import FilterAccordion from './FilterAccordion';
 import { useSettings } from '../hooks/useSettings';
-import { Box } from '@mui/material';
+
 const OriginFilter = ({ stoneOrigin, setStoneOrigin }) => {
     const storeId = "test-store.myshopify.com";
     const { settings } = useSettings(storeId)
