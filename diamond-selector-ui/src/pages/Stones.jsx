@@ -1,12 +1,22 @@
-import { Box, CircularProgress, Pagination, Typography } from "@mui/material";
+import { Box, Pagination, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import DiamondList from "../components/DiamondList";
 import FilterSlider from "../components/FilterSlider";
 import GemstoneList from "../components/GemstoneList";
 import { useDiamonds } from "../hooks/useDiamonds";
 import { useGemstones } from "../hooks/useGemstones";
-import "../styles/Dashboard.css";
+import "../styles/stones.css";
 import { useSettings } from "../hooks/useSettings";
+import Loader from "../components/Loader";
+import CaratFilter from "../components/CaratFilter";
+import ClarityFilter from "../components/ClarityFilter";
+import PriceFilter from "../components/PriceFilter";
+import OriginFilter from "../components/OriginFilter";
+import ColorFilter from "../components/ColorFilter";
+import CutFilter from "../components/CutFilter";
+import ReportFilter from "../components/ReportFilter";
+import PolishFilter from "../components/PolishFilter";
+import FluorescenceFilter from "../components/FluorescenceFilter";
 
 const Stones = () => {
   const storeId = "test-store.myshopify.com";
@@ -18,7 +28,6 @@ const Stones = () => {
   const [stoneOrigin, setStoneOrigin] = useState("lab");
 
   const isGemstone = stoneOrigin === "gemstones";
-
 
   const { diamonds, pagination: dPag, loading: dLoad } = useDiamonds(storeId, !isGemstone ? stoneOrigin : null, page, selectedShape);
   const { gemstones, pagination: gPag, loading: gLoad } = useGemstones(storeId, isGemstone ? stoneOrigin : null, page, selectedShape);
@@ -32,45 +41,40 @@ const Stones = () => {
     setSelectedShape("");
   }, [stoneOrigin]);
 
-
   return (
     <>
+      <Box sx={{mt: 2, mb: 2}}>
+        <FilterSlider stoneOrigin={stoneOrigin} />
+      </Box>
 
-      <FilterSlider stoneOrigin={stoneOrigin} />
+      <Box sx={{ display: "flex", width: "100%", gap: 2 }}>
 
-      <Box sx={{ display: "flex", width: "100%", gap: 3, mt: 2 }}>
-
-        {/* SIDEBAR: FILTER SECTION */}
-        <Box sx={{ width: 280, flexShrink: 0, }}>
-          <Typography variant="h6" fontWeight={600} mb={1}>Stone Origin</Typography>
-
-          {/* TABS: Lab, Natural, Gemstones */}
-          <Box sx={{ display: "flex", p: 0.5, borderRadius: 1, border: "1px solid #e2e8f0" }}>
-            {stone_type?.map((item) => (
-              <Box
-                key={item?.id}
-                onClick={() => setStoneOrigin(item?.id)}
-                sx={{
-                  flex: 1, textAlign: "center", py: 1, cursor: "pointer", borderRadius: 1,
-                  bgcolor: stoneOrigin === item?.id ? "#14532d" : "transparent",
-                  color: stoneOrigin === item?.id ? "#fff" : "#666",
-                  transition: "0.2s",
-                  fontSize: "14px"
-                }}
-              >
-                {/* {type === "lab" ? "Lab" : type === "natural" ? "Natural" : "Gem"} */}
-                {item?.label}
-              </Box>
-            ))}
-          </Box>
+        <Box
+          sx={{
+            width: 350,
+            flexShrink: 0,
+            position: "sticky",
+            top: 0,
+            alignSelf: "flex-start",
+            height: "100vh",
+            overflowY: "auto",
+            overflowX: "hidden"
+          }}
+        >
+          <OriginFilter stoneOrigin={stoneOrigin} setStoneOrigin={setStoneOrigin} />
+          <CaratFilter />
+          <ColorFilter />
+          <ClarityFilter />
+          <PriceFilter />
+          <CutFilter />
+          <ReportFilter />
+          <PolishFilter />
+          <FluorescenceFilter />
         </Box>
-
         {/* LIST SECTION */}
         <Box sx={{ flex: 1 }}>
           {isLoading ? (
-            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "300px" }}>
-              <CircularProgress size={40} thickness={4} sx={{ color: "#14532d" }} />
-            </Box>
+            <Loader />
           ) : (
             <>
               {isGemstone ? (
@@ -92,7 +96,7 @@ const Stones = () => {
                     shape="rounded"
                     size="large"
                     sx={{
-                      '& .Mui-selected': { bgcolor: '#14532d !important' }
+                      '& .Mui-selected': { bgcolor: 'var(--ds-primary-color) !important' }
                     }}
                   />
                 </Box>

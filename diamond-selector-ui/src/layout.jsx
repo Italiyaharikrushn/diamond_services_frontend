@@ -5,6 +5,7 @@ import { getDisplaySteps, handleStepClickLogic } from "./utils/dashboardLogic";
 import { baseSteps } from "./components/step";
 import { Container } from "@mui/material";
 import { useSettings } from "./hooks/useSettings";
+import Loader from "./components/Loader";
 
 const Layout = () => {
     const [isSwapped, setIsSwapped] = useState(false);
@@ -12,6 +13,7 @@ const Layout = () => {
     // const displaySteps = getDisplaySteps(baseSteps, isSwapped);
     const [completedSteps] = useState([]);
     const storeId = "test-store.myshopify.com";
+    const { settings, isLoading } = useSettings(storeId)
 
     // const handleStepClick = (stepNumber) => {
     //     handleStepClickLogic({
@@ -25,7 +27,7 @@ const Layout = () => {
     //     });
     // };
 
-    return (
+    return isLoading ? <Loader /> : (
         <div>
             <Container maxWidth="xl" >
                 <h1 className="dashboard-title">Design Your Own Engagement</h1>

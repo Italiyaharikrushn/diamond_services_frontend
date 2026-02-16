@@ -7,7 +7,7 @@ const StoneCard = ({ item }) => {
     return (
         <Card
             sx={{
-                borderRadius: 2,
+                borderRadius: "var(--ds-border-radius)",
                 border: "1px solid #eee",
                 padding: "10px",
                 boxShadow: "none",
@@ -22,7 +22,7 @@ const StoneCard = ({ item }) => {
                     width: "100%",
                     aspectRatio: "1 / 1",
                     backgroundColor: "#959da2",
-                    borderRadius: 1,
+                    borderRadius: "var(--ds-border-radius)",
                     position: "relative",
                     overflow: "hidden",
                     display: "flex",

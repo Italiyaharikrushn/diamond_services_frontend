@@ -7,6 +7,7 @@ import RichTextEditor from "../../components/RichTextEditor";
 import FeatureIconItem from "../../components/FeatureIconItem";
 import { SettingRow } from "../../components/SettingRow";
 import StoneConfigRow from "../../components/StoneConfigRow";
+import { useStoneToggle } from "../../utils/handleToggleStone";
 
 const General = () => {
     const dispatch = useDispatch();
@@ -14,15 +15,10 @@ const General = () => {
     const generalSettings = settings?.general;
     const stoneConfig = generalSettings?.stone_config;
 
+    const { handleToggleStone } = useStoneToggle();
+
     const handleUpdate = (path, value) => {
         dispatch(updateSettingByPath({ path: `general.${path}`, value }));
-    };
-
-    const handleToggleStone = (id) => {
-        const updatedStones = stoneConfig?.stone_types?.map(stone =>
-            stone.id === id ? { ...stone, enabled: !stone.enabled } : stone
-        );
-        handleUpdate("stone_config.stone_types", updatedStones);
     };
 
     return (
@@ -100,10 +96,6 @@ const General = () => {
                     </Stack>
                 </Paper>
             </SettingRow>
-
-
-
-
 
             <Divider sx={{ my: 3 }} />
 

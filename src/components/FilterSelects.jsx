@@ -59,7 +59,6 @@ const FilterSelects = ({ filters, setFilters }) => {
                                 onChange={(e, val) => setFilters(prev => ({ ...prev, price: val }))}
                                 min={priceRangeUI?.min || 0}
                                 max={priceRangeUI?.max || 0}
-                                valueLabelDisplay="auto"
                             />
                             <Box sx={{ display: 'flex', width: "100%", justifyContent: 'space-between', alignItems: 'center' }}>
                                 <TextField
@@ -110,7 +109,6 @@ const FilterSelects = ({ filters, setFilters }) => {
                                 min={caratRangeUI?.min || 0}
                                 max={caratRangeUI?.max || 0}
                                 step={0.01}
-                                valueLabelDisplay="auto"
                             />
                             <Box sx={{ display: 'flex', width: "100%", justifyContent: 'space-between', alignItems: 'center' }}>
                                 <TextField

@@ -1,11 +1,12 @@
 import { useGetPublicSettingsQuery } from "../api/settingsApi";
 
 export const useSettings = (storeId) => {
-    const { data, isLoading, error, isFetchig } = useGetPublicSettingsQuery({storeId});
+    const { data, isLoading } = useGetPublicSettingsQuery({ storeId });
 
     const settings = data?.settings || [];
 
-    return{
-        settings
+    return {
+        settings,
+        isLoading
     };
 };

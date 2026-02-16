@@ -36,7 +36,7 @@ const Stepper = ({ steps, currentStep, completedSteps }) => {
 
                             <div className={`step-info ${isActive ? "active-text" : " inactive-text "}`}>
                                 <h3>{step.title}</h3>
-                                {/* <p>{isLocked ? "Locked" : step.subtitle}</p> */}
+                                <p>{step.subtitle}</p>
                             </div>
                         </div>
 
