@@ -15,6 +15,7 @@ export const diamondApi = createApi({
                     type : params.type,
                     page : params.page,
                     limit : params.limit,
+                    shape: params.shape,
                 },
             }),
         }),

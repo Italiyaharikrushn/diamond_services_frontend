@@ -20,7 +20,7 @@ import FluorescenceFilter from "../components/FluorescenceFilter";
 
 const Stones = () => {
   const storeId = "test-store.myshopify.com";
-  const [selectedShape, setSelectedShape] = useState("");
+  const [selectedShape, setSelectedShape] = useState([]);
   const [page, setPage] = useState(1);
   const { settings } = useSettings(storeId)
   const stone_type = settings?.general?.stone_config?.stone_types?.filter((item) => item?.enabled);
@@ -35,7 +35,6 @@ const Stones = () => {
   const activePagination = isGemstone ? gPag : dPag;
   const isLoading = isGemstone ? gLoad : dLoad;
 
-
   useEffect(() => {
     setPage(1);
     setSelectedShape("");
@@ -44,7 +43,7 @@ const Stones = () => {
   return (
     <>
       <Box sx={{mt: 2, mb: 2}}>
-        <FilterSlider stoneOrigin={stoneOrigin} />
+        <FilterSlider stoneOrigin={stoneOrigin} onChange={(shapes) => setSelectedShape(shapes)} />
       </Box>
 
       <Box sx={{ display: "flex", width: "100%", gap: 2 }}>
