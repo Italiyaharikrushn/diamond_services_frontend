@@ -23,7 +23,6 @@ const Stones = () => {
   const [selectedShape, setSelectedShape] = useState([]);
   const [page, setPage] = useState(1);
   const { settings } = useSettings(storeId)
-  const stone_type = settings?.general?.stone_config?.stone_types?.filter((item) => item?.enabled);
 
   const [stoneOrigin, setStoneOrigin] = useState("lab");
 
@@ -37,7 +36,7 @@ const Stones = () => {
 
   useEffect(() => {
     setPage(1);
-    setSelectedShape("");
+    setSelectedShape([]);
   }, [stoneOrigin]);
 
   return (

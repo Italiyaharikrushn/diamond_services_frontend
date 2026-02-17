@@ -13,7 +13,7 @@ export const useDiamonds = (storeId, type, page, shapes) => {
 
     return {
         diamonds: diamondData,
-        pagination: data?.pagination,
+        pagination: data?.data?.pagination,
         loading: isLoading || isFetching,
         error,
     };

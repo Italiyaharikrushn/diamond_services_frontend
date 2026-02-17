@@ -9,7 +9,6 @@ export const useGemstones = (storeId, type, page, shapes) => {
         { storeId, type, page, limit: 12, shape: shapeParam },
         { skip: !storeId || !type }
     );
-
     const gemstoneData = data?.data?.gemstones || [];
 
     return {
