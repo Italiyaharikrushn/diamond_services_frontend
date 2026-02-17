@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import "../styles/stones.css";
 import { useDiamonds } from "../hooks/useDiamonds";
 import { useGemstones } from "../hooks/useGemstones";
-import { useSettings } from "../hooks/useSettings";
 import Loader from "../components/Loader";
 import DiamondList from "../components/DiamondList";
 import FilterSlider from "../components/FilterSlider";
@@ -20,11 +19,9 @@ import FluorescenceFilter from "../components/FluorescenceFilter";
 
 const Stones = () => {
   const storeId = "test-store.myshopify.com";
+  const [stoneOrigin, setStoneOrigin] = useState("lab");
   const [selectedShape, setSelectedShape] = useState([]);
   const [page, setPage] = useState(1);
-  const { settings } = useSettings(storeId)
-
-  const [stoneOrigin, setStoneOrigin] = useState("lab");
 
   const isGemstone = stoneOrigin === "gemstones";
 
@@ -41,7 +38,7 @@ const Stones = () => {
 
   return (
     <>
-      <Box sx={{mt: 2, mb: 2}}>
+      <Box sx={{ mt: 2, mb: 2 }}>
         <FilterSlider stoneOrigin={stoneOrigin} onChange={(shapes) => setSelectedShape(shapes)} />
       </Box>
 

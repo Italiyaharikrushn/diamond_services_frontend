@@ -5,9 +5,7 @@ import FilterAccordion from './FilterAccordion';
 const CaratFilter = () => {
   const [value, setValue] = useState([0, 50]);
 
-  const handleSliderChange = (event, newValue) => {
-    setValue(newValue);
-  };
+  const handleSliderChange = (event, newValue) => { setValue(newValue); };
 
   const handleMinChange = (e) => {
     const newMin = Number(e.target.value);

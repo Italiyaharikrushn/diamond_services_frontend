@@ -11,9 +11,7 @@ function PolishFilter() {
 
         const minDistance = 1;
 
-        if (newValue[1] - newValue[0] >= minDistance) {
-            setValue(newValue);
-        }
+        if (newValue[1] - newValue[0] >= minDistance) return setValue(newValue);
     };
 
     return (

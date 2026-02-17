@@ -16,9 +16,7 @@ function ReportFilter({ onChange }) {
             updatedSelection = [...selectedReports, value];
         }
         setSelectedReports(updatedSelection);
-        if (onChange) {
-            onChange(updatedSelection);
-        }
+        if (onChange) onChange(updatedSelection);
     };
 
     return (
