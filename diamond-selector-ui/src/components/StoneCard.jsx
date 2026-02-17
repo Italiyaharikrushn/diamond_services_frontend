@@ -1,5 +1,6 @@
 import React from "react";
 import { Typography, Box, Card, CardContent } from "@mui/material";
+import ShapeImageMap from "../utils/shapeImageMap";
 
 const StoneCard = ({ item }) => {
     if (!item) return null;
@@ -46,7 +47,6 @@ const StoneCard = ({ item }) => {
                     component="img"
                     src={item.image_source || finalImage}
                     alt={item.shape}
-                    onError={handleError}
                     style={{
                         width: "100%",
                         height: "100%",
