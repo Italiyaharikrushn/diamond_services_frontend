@@ -4,6 +4,20 @@ import { Typography, Box, Card, CardContent } from "@mui/material";
 const StoneCard = ({ item }) => {
     if (!item) return null;
 
+    const getStoneImage = () => {
+        if (item.image_source && item.image_source !== "" && item.image_source !== "null") {
+            return item.image_source;
+        }
+
+        const shapeKey = item.shape?.toLowerCase();
+        return ShapeImageMap[shapeKey];
+    };
+
+    const handleError = (e) => {
+        e.target.src = getFallbackImage();
+    };
+    const finalImage = getStoneImage();
+
     return (
         <Card
             sx={{
@@ -30,8 +44,9 @@ const StoneCard = ({ item }) => {
             >
                 <img
                     component="img"
-                    src={item.image_source}
+                    src={item.image_source || finalImage}
                     alt={item.shape}
+                    onError={handleError}
                     style={{
                         width: "100%",
                         height: "100%",
