@@ -5,21 +5,16 @@ import { useDiamonds } from "../hooks/useDiamonds";
 import { useGemstones } from "../hooks/useGemstones";
 import Loader from "../components/Loader";
 import DiamondList from "../components/DiamondList";
-import FilterSlider from "../components/FilterSlider";
 import GemstoneList from "../components/GemstoneList";
-import CaratFilter from "../components/CaratFilter";
-import ClarityFilter from "../components/ClarityFilter";
-import PriceFilter from "../components/PriceFilter";
 import OriginFilter from "../components/OriginFilter";
-import ColorFilter from "../components/ColorFilter";
-import CutFilter from "../components/CutFilter";
-import ReportFilter from "../components/ReportFilter";
-import PolishFilter from "../components/PolishFilter";
-import FluorescenceFilter from "../components/FluorescenceFilter";
+import ShapeSlider from "../components/ShapeSlider";
+import StoneFilter from "../components/StoneFilter";
+import StoneHeader from "../components/StoneHeader";
 
 const Stones = () => {
   const storeId = "test-store.myshopify.com";
   const [stoneOrigin, setStoneOrigin] = useState("lab");
+  const [view, setView] = useState("grid");
   const [selectedShape, setSelectedShape] = useState([]);
   const [page, setPage] = useState(1);
 
@@ -39,7 +34,7 @@ const Stones = () => {
   return (
     <>
       <Box sx={{ mt: 2, mb: 2 }}>
-        <FilterSlider stoneOrigin={stoneOrigin} onChange={(shapes) => setSelectedShape(shapes)} />
+        <ShapeSlider stoneOrigin={stoneOrigin} onChange={(shapes) => setSelectedShape(shapes)} />
       </Box>
 
       <Box sx={{ display: "flex", width: "100%", gap: 2 }}>
@@ -57,14 +52,7 @@ const Stones = () => {
           }}
         >
           <OriginFilter stoneOrigin={stoneOrigin} setStoneOrigin={setStoneOrigin} />
-          <CaratFilter />
-          <ColorFilter />
-          <ClarityFilter />
-          <PriceFilter />
-          <CutFilter />
-          <ReportFilter />
-          <PolishFilter />
-          <FluorescenceFilter />
+          <StoneFilter stoneOrigin={stoneOrigin} />
         </Box>
         {/* LIST SECTION */}
         <Box sx={{ flex: 1 }}>
@@ -72,10 +60,13 @@ const Stones = () => {
             <Loader />
           ) : (
             <>
+              {/* Data Count & Grid / View Icon */}
+              <StoneHeader count={activePagination?.total} view={view} setView={setView} />
+
               {isGemstone ? (
-                <GemstoneList gemstones={gemstones} />
+                <GemstoneList gemstones={gemstones} view={view} />
               ) : (
-                <DiamondList diamonds={diamonds} />
+                <DiamondList diamonds={diamonds} view={view} />
               )}
 
               {activePagination && activePagination.total_pages > 1 && (

@@ -5,7 +5,7 @@ import { Box, IconButton } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-const FilterSlider = ({ stoneOrigin, onChange }) => {
+const ShapeSlider = ({ stoneOrigin, onChange }) => {
     const storeId = "test-store.myshopify.com";
     const { settings } = useSettings(storeId);
     const [selectedId, setSelectedId] = useState([]);
@@ -109,4 +109,4 @@ const FilterSlider = ({ stoneOrigin, onChange }) => {
     )
 }
 
-export default FilterSlider;
+export default ShapeSlider;

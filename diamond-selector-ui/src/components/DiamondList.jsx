@@ -1,10 +1,15 @@
 import React from "react";
 import StoneCard from "./StoneCard";
+import StoneTable from "./StoneTable";
 
-const DiamondList = ({ diamonds }) => {
+const DiamondList = ({ diamonds, view }) => {
     const list = Array.isArray(diamonds) ? diamonds : diamonds?.data || [];
 
     if (!list.length) return <p>No diamonds found for this store.</p>;
+
+    if (view === "list") {
+        return <StoneTable data={list} />; 
+    }
 
     return (
         <div
