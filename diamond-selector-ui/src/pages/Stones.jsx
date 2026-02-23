@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import "../styles/stones.css";
 import { useDiamonds } from "../hooks/useDiamonds";
 import { useGemstones } from "../hooks/useGemstones";
+import { useSettings } from "../hooks/useSettings";
+import { useStoneView } from "../hooks/useStoneView";
 import Loader from "../components/Loader";
 import DiamondList from "../components/DiamondList";
 import GemstoneList from "../components/GemstoneList";
@@ -13,13 +15,13 @@ import StoneHeader from "../components/StoneHeader";
 
 const Stones = () => {
   const storeId = "test-store.myshopify.com";
+  const { settings } = useSettings(storeId);
   const [stoneOrigin, setStoneOrigin] = useState("lab");
-  const [view, setView] = useState("grid");
+  const { view, setView, allowedViews } = useStoneView(settings);
   const [selectedShape, setSelectedShape] = useState([]);
   const [page, setPage] = useState(1);
 
   const isGemstone = stoneOrigin === "gemstones";
-
   const { diamonds, pagination: dPag, loading: dLoad } = useDiamonds(storeId, !isGemstone ? stoneOrigin : null, page, selectedShape);
   const { gemstones, pagination: gPag, loading: gLoad } = useGemstones(storeId, isGemstone ? stoneOrigin : null, page, selectedShape);
 
@@ -61,12 +63,12 @@ const Stones = () => {
           ) : (
             <>
               {/* Data Count & Grid / View Icon */}
-              <StoneHeader count={activePagination?.total} view={view} setView={setView} />
+              <StoneHeader count={activePagination?.total} view={view} setView={setView} allowedViews={allowedViews} />
 
               {isGemstone ? (
-                <GemstoneList gemstones={gemstones} view={view} />
+                <GemstoneList gemstones={gemstones} view={view} allowedViews={allowedViews} />
               ) : (
-                <DiamondList diamonds={diamonds} view={view} />
+                <DiamondList diamonds={diamonds} view={view} allowedViews={allowedViews} />
               )}
 
               {activePagination && activePagination.total_pages > 1 && (

@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
 import ViewListOutlinedIcon from '@mui/icons-material/ViewListOutlined';
 
-const StoneHeader = ({ count, view, setView }) => {
+const StoneHeader = ({ count, view, setView, allowedViews = [] }) => {
     const iconBoxStyle = (activeView) => ({
         cursor: "pointer",
         display: "flex",
@@ -29,19 +29,17 @@ const StoneHeader = ({ count, view, setView }) => {
 
             {/* Grid & List View Toggle */}
             <Box sx={{ display: 'flex', gap: 1 }}>
-                <Box
-                    onClick={() => setView("grid")}
-                    sx={iconBoxStyle("grid")}
-                >
-                    <GridViewOutlinedIcon fontSize="small" />
-                </Box>
+                {allowedViews.includes("grid") && (
+                    <Box onClick={() => setView("grid")} sx={iconBoxStyle("grid")}>
+                        <GridViewOutlinedIcon fontSize="small" />
+                    </Box>
+                )}
 
-                <Box
-                    onClick={() => setView("list")}
-                    sx={iconBoxStyle("list")}
-                >
-                    <ViewListOutlinedIcon fontSize="small" />
-                </Box>
+                {allowedViews.includes("list") && (
+                    <Box onClick={() => setView("list")} sx={iconBoxStyle("list")}>
+                        <ViewListOutlinedIcon fontSize="small" />
+                    </Box>
+                )}
             </Box>
         </Box>
     );
