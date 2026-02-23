@@ -21,7 +21,7 @@ const Dashboard = () => {
         </Tabs>
       </Box>
 
-      <Box sx={{ mt: 2 }}>
+      <Box sx={{ mt: 2, p:2 }}>
         {tabValue === 0 && <DiamondPage key="lab" stone_type="lab" />}
         {tabValue === 1 && <GemstonePage key="gem" stone_type="gemstone" />}
         {tabValue === 2 && <DiamondPage key="natural" stone_type="natural" />}

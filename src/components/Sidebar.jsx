@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-// NavLink ઇમ્પોર્ટ કરો
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout } from '../redux/authSlice';
+import '../App.css';
 import './Sidebar.css';
 
 const Sidebar = () => {
@@ -12,6 +12,7 @@ const Sidebar = () => {
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
+    document.body.querySelector(".app-layout")?.classList.toggle("sidebar-collapsed");
   };
 
   const handleLogout = () => {

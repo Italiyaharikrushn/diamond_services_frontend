@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Tabs, Tab, Container, Button } from "@mui/material";
 import ComplateRing from "./complate/ComplateRing";
 import Gemstones from "./complate/gemsrones";
@@ -10,7 +10,7 @@ import { useSettings } from "../utils/useSettings";
 import { useSelector } from "react-redux";
 
 const Settings = () => {
-    const [tabValue, setTabValue] = React.useState(0);
+    const [tabValue, setTabValue] = useState(0);
     const { saveSettings, isSaving } = useSettings();
     const settings = useSelector((state) => state.settings.settings);
 
@@ -24,7 +24,7 @@ const Settings = () => {
 
     return (
         <>
-            <Box sx={{ borderBottom: 1, borderColor: "divider", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+            <Box sx={{ borderBottom: 1, borderColor: "divider", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <Tabs
                     value={tabValue}
                     onChange={handleTabChange}

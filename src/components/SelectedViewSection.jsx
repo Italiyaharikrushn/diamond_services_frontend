@@ -21,7 +21,7 @@ const SelectedViewSection = ({ selected_view, default_view, onToggleView, onUpda
           ))}
         </Stack>
 
-        <Typography sx={{ mb: 1, fontWeight: 500 }}>Default View</Typography>
+        <Typography sx={{ mb: 1, fontWeight: 500 }}>Select Default Result View</Typography>
 
         <RadioGroup
           row
