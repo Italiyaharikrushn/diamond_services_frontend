@@ -19,7 +19,7 @@ const GemstonePage = ({ category = "" }) => {
     color: [],
     clarity: [],
     price: [0, 0],
-    carat: [0, 0],
+    carat: [],
     stone_type: category || ""
   });
 

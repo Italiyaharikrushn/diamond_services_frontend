@@ -21,9 +21,17 @@ const Stones = () => {
   const [selectedShape, setSelectedShape] = useState([]);
   const [page, setPage] = useState(1);
 
+  const [filters, setFilters] = useState({
+    // carat: [0, 15],
+    carat: [],
+    price: [],
+    color: [],
+    clarity: [],
+  });
+
   const isGemstone = stoneOrigin === "gemstones";
-  const { diamonds, pagination: dPag, loading: dLoad } = useDiamonds(storeId, !isGemstone ? stoneOrigin : null, page, selectedShape);
-  const { gemstones, pagination: gPag, loading: gLoad } = useGemstones(storeId, isGemstone ? stoneOrigin : null, page, selectedShape);
+  const { diamonds, pagination: dPag, loading: dLoad } = useDiamonds(storeId, !isGemstone ? stoneOrigin : null, page, selectedShape, filters);
+  const { gemstones, pagination: gPag, loading: gLoad } = useGemstones(storeId, isGemstone ? stoneOrigin : null, page, selectedShape, filters);
 
   const activePagination = isGemstone ? gPag : dPag;
   const isLoading = isGemstone ? gLoad : dLoad;
@@ -31,6 +39,18 @@ const Stones = () => {
   useEffect(() => {
     setPage(1);
     setSelectedShape([]);
+
+    setFilters({
+      // carat: [0, 15],
+      carat: [],
+      price: [],
+      color: [],
+      clarity: [],
+      cut: [],
+      polish: [],
+      fluorescence: [],
+      report: []
+    });
   }, [stoneOrigin]);
 
   return (
@@ -54,7 +74,7 @@ const Stones = () => {
           }}
         >
           <OriginFilter stoneOrigin={stoneOrigin} setStoneOrigin={setStoneOrigin} />
-          <StoneFilter stoneOrigin={stoneOrigin} />
+          <StoneFilter stoneOrigin={stoneOrigin} filters={filters} setFilters={setFilters} />
         </Box>
         {/* LIST SECTION */}
         <Box sx={{ flex: 1 }}>

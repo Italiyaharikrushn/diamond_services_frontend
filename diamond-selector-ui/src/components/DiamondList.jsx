@@ -4,7 +4,7 @@ import StoneTable from "./StoneTable";
 
 const DiamondList = ({ diamonds, view }) => {
     const list = Array.isArray(diamonds) ? diamonds : diamonds?.data || [];
-    if (!list.length) return <p>No diamonds found for this store.</p>;
+    // if (!list.length) return <p>No diamonds found for this store.</p>;
 
     if (view === "list") {
         return <StoneTable data={list} />;

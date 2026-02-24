@@ -16,6 +16,8 @@ export const diamondApi = createApi({
                     page : params.page,
                     limit : params.limit,
                     shape: params.shape,
+                    min_carat: params.min_carat,
+                    max_carat: params.max_carat,
                 },
             }),
         }),

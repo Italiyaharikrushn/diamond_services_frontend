@@ -1,12 +1,12 @@
 import { useGetPublicGemstonesQuery } from "../api/gemstoneApi";
 
-export const useGemstones = (storeId, type, page, shapes) => {
+export const useGemstones = (storeId, type, page, shapes, filters) => {
     const shapeParam = Array.isArray(shapes)
         ? shapes.join(",")
         : shapes || undefined;
 
     const { data, isLoading, error, isFetching } = useGetPublicGemstonesQuery(
-        { storeId, type, page, limit: 12, shape: shapeParam },
+        { storeId, type, page, limit: 12, shape: shapeParam, min_carat: filters?.carat?.[0], max_carat: filters?.carat?.[1] },
         { skip: !storeId || !type }
     );
     const gemstoneData = data?.data?.gemstones || [];

@@ -1,49 +1,30 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Slider, TextField } from '@mui/material';
 import FilterAccordion from './FilterAccordion';
 
-const CaratFilter = () => {
-  const [value, setValue] = useState([0, 50]);
+const CaratFilter = ({ config, onChange, value }) => {
 
-  const handleSliderChange = (event, newValue) => { setValue(newValue); };
+  const minLimit = config?.min || 0;
+  const maxLimit = config?.max || 15;
 
-  const handleMinChange = (e) => {
-    const newMin = Number(e.target.value);
-    setValue([newMin, value[1]]);
-  };
-
-  const handleMaxChange = (e) => {
-    const newMax = Number(e.target.value);
-    setValue([value[0], newMax]);
-  };
+  const [localValue, setLocalValue] = useState(value || [minLimit, maxLimit]);
+  useEffect(() => {
+    if (value) {
+      setLocalValue(value);
+    }
+  }, [value]);
 
   return (
-    <FilterAccordion title="Carat">
+    <FilterAccordion title={config?.label || "Carat"}>
       <Box sx={{ padding: "0px 8px" }}>
         <Slider
-          value={value}
-          onChange={handleSliderChange}
-          min={0}
-          max={50}
-          sx={{
-            color: "var(--ds-primary-color)",
-
-            "& .MuiSlider-track": {
-              height: 5,
-              border: "none",
-            },
-
-            "& .MuiSlider-rail": {
-              height: 5,
-            },
-
-            "& .MuiSlider-thumb": {
-              width: 18,
-              height: 18,
-              backgroundColor: "#fff",
-            },
-
-          }}
+          value={localValue}
+          onChange={(e, newValue) => setLocalValue(newValue)}
+          onChangeCommitted={(e, newValue) => onChange(newValue)}
+          min={minLimit}
+          max={maxLimit}
+          step={0.01}
+          sx={{ color: "var(--ds-primary-color)" }}
         />
       </Box>
       <Box display="flex" justifyContent="space-between" gap={2} mt={1}>
@@ -51,18 +32,26 @@ const CaratFilter = () => {
           label="Min"
           size="small"
           type="number"
-          value={value[0]}
-          onChange={handleMinChange}
-          sx={{ width: "100px", }}
+          value={localValue[0]}
+          onChange={(e) => {
+            const val = [Number(e.target.value), localValue[1]];
+            setLocalValue(val);
+            onChange(val);
+          }}
+          sx={{ width: "100px" }}
         />
 
         <TextField
           label="Max"
           size="small"
           type="number"
-          value={value[1]}
-          onChange={handleMaxChange}
-          sx={{ width: "100px", }}
+          value={localValue[1]}
+          onChange={(e) => {
+            const val = [localValue[0], Number(e.target.value)];
+            setLocalValue(val);
+            onChange(val);
+          }}
+          sx={{ width: "100px" }}
         />
       </Box>
     </FilterAccordion>

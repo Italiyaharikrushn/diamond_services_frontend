@@ -20,9 +20,16 @@ const FILTER_COMPONENTS = {
     fluorescence: FluorescenceFilter,
 };
 
-const StoneFilter = ({ stoneOrigin }) => {
+const StoneFilter = ({ stoneOrigin, filters, setFilters }) => {
     const storeId = "test-store.myshopify.com";
     const { settings } = useSettings(storeId);
+
+    const handleFilterChange = (filterType, newValue) => {
+        setFilters(prev => ({
+            ...prev,
+            [filterType]: newValue
+        }));
+    };
 
     if (!settings) return null;
 
@@ -40,7 +47,7 @@ const StoneFilter = ({ stoneOrigin }) => {
                 if (!FilterComponent) return null;
 
                 return (
-                    <FilterComponent key={`${type}-${index}`} config={filter} stoneOrigin={stoneOrigin} />
+                    <FilterComponent key={`${type}-${index}`} config={filter} value={filters?.[type] && filters[type].length > 0 ? filters[type] : [filter.min || 0, filter.max || 15]} onChange={(val) => handleFilterChange(type, val)} />
                 );
             })}
         </>

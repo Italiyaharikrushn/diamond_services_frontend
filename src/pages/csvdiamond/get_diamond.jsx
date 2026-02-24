@@ -22,6 +22,7 @@ const DiamondPage = ({ stone_type = "" }) => {
     clarity: [],
     price: [],
     carat: [],
+    // carat: [0, 15],
   });
 
   const { data: filterRes } = useGetDiamondFiltersQuery({
