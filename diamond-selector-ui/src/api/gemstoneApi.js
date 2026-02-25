@@ -18,6 +18,8 @@ export const gemstoneApi = createApi({
                     shape: params.shape,
                     min_carat: params.min_carat,
                     max_carat: params.max_carat,
+                    min_price: params.min_price,
+                    max_price: params.max_price,
                 },
             }),
         }),

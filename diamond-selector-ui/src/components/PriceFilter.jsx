@@ -1,32 +1,42 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Slider, TextField } from '@mui/material';
 import FilterAccordion from './FilterAccordion';
 
-const PriceFilter = () => {
-  const [value, setValue] = useState([0, 50]);
+const PriceFilter = ({ config, value, onChange }) => {
+
+  const minLimit = config?.min || 0;
+  const maxLimit = config?.max || 5000;
+
+  const [localValue, setLocalValue] = useState([minLimit, maxLimit]);
+
+  useEffect(() => {
+    if (Array.isArray(value) && value.length === 2) {
+      setLocalValue(value);
+    } else {
+      setLocalValue([minLimit, maxLimit]);
+    }
+  }, [value, minLimit, maxLimit]);
 
   const handleSliderChange = (event, newValue) => {
-    setValue(newValue);
+    setLocalValue(newValue);
   };
 
-  const handleMinChange = (e) => {
-    const newMin = Number(e.target.value);
-    setValue([newMin, value[1]]);
+  const handleCommitted = (event, newValue) => {
+    onChange(newValue);
   };
 
-  const handleMaxChange = (e) => {
-    const newMax = Number(e.target.value);
-    setValue([value[0], newMax]);
+  const handleInputBlur = () => {
+    onChange(localValue);
   };
-
   return (
-    <FilterAccordion title="Price">
+    <FilterAccordion title={config?.label || "Price"}>
       <Box sx={{ padding: "0px 8px" }}>
         <Slider
-          value={value}
+          value={localValue}
           onChange={handleSliderChange}
-          min={0}
-          max={50}
+          onChangeCommitted={handleCommitted}
+          min={minLimit}
+          max={maxLimit}
           sx={{
             color: "var(--ds-primary-color)",
 
@@ -53,8 +63,9 @@ const PriceFilter = () => {
           label="Min"
           size="small"
           type="number"
-          value={value[0]}
-          onChange={handleMinChange}
+          value={localValue[0] ?? 0}
+          onChange={(e) => setLocalValue([Number(e.target.value), localValue[1]])}
+          onBlur={() => onChange(localValue)}
           sx={{ width: "100px", }}
         />
 
@@ -62,8 +73,8 @@ const PriceFilter = () => {
           label="Max"
           size="small"
           type="number"
-          value={value[1]}
-          onChange={handleMaxChange}
+          value={localValue[1]}
+          onChange={(e) => setLocalValue([localValue[0], Number(e.target.value)])}
           sx={{ width: "100px", }}
         />
       </Box>

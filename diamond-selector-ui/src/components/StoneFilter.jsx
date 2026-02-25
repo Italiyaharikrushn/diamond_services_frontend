@@ -47,7 +47,12 @@ const StoneFilter = ({ stoneOrigin, filters, setFilters }) => {
                 if (!FilterComponent) return null;
 
                 return (
-                    <FilterComponent key={`${type}-${index}`} config={filter} value={filters?.[type] && filters[type].length > 0 ? filters[type] : [filter.min || 0, filter.max || 15]} onChange={(val) => handleFilterChange(type, val)} />
+                    <FilterComponent key={`${type}-${index}`
+                    }
+                        config={filter}
+                        value={filters[type] || (type === 'price' ? [0, 5000] : (type === 'carat' ? [0, 15] : []))}
+                        onChange={(val) => handleFilterChange(type, val)}
+                    />
                 );
             })}
         </>

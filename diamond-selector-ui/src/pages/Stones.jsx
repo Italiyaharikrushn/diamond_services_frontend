@@ -22,9 +22,8 @@ const Stones = () => {
   const [page, setPage] = useState(1);
 
   const [filters, setFilters] = useState({
-    // carat: [0, 15],
-    carat: [],
-    price: [],
+    carat: [0, 15],
+    price: [0, 5000],
     color: [],
     clarity: [],
   });
@@ -41,9 +40,8 @@ const Stones = () => {
     setSelectedShape([]);
 
     setFilters({
-      // carat: [0, 15],
-      carat: [],
-      price: [],
+      carat: [0, 15],
+      price: [0, 5000],
       color: [],
       clarity: [],
       cut: [],
