@@ -1,17 +1,37 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Slider } from '@mui/material';
 import FilterAccordion from './FilterAccordion';
 
-function PolishFilter() {
-    const polish = ["J", "I", "H", "G", "F", "E", "D"];
-    const [value, setValue] = useState([1, polish.length + 1]);
+function PolishFilter({ config, onChange, value = [] }) {
 
-    const handleChange = (event, newValue) => {
-        if (!Array.isArray(newValue)) return;
+    const polish = config?.values || [];
+    const [range, setRange] = useState([1, polish.length]);
 
-        const minDistance = 1;
+    useEffect(() => {
+        if (!polish.length) return;
 
-        if (newValue[1] - newValue[0] >= minDistance) return setValue(newValue);
+        if (!value.length) {
+            setRange([1, polish.length]);
+            return;
+        }
+
+        const start = polish.indexOf(value[0]) + 1;
+        const end = polish.indexOf(value[value.length - 1]) + 1;
+
+        if (start > 0 && end > 0) {
+            setRange([start, end]);
+        }
+    }, [value, polish]);
+
+    const handleChange = (_, newRange) => {
+        setRange(newRange);
+
+        const selectedPolish = polish.slice(
+            newRange[0] - 1,
+            newRange[1]
+        );
+
+        onChange(selectedPolish)
     };
 
     return (
@@ -19,46 +39,16 @@ function PolishFilter() {
         <FilterAccordion title="Polish">
             <Box sx={{ padding: "0px 8px" }}>
                 <Slider
-                    defaultValue={[0, polish.length + 1]}
-                    shiftStep={30}
+                    value={range}
+                    onChange={handleChange}
+                    min={1}
+                    max={polish.length}
                     step={1}
                     marks
-                    value={value}
-                    onChange={handleChange}
+                    defaultValue={[0, polish.length + 1]}
+                    shiftStep={30}
                     disableSwap
-                    min={1}
-                    max={polish.length + 1}
-                    sx={{
-                        color: "var(--ds-primary-color)",
-
-                        "& .MuiSlider-track": {
-                            height: 5,
-                            border: "none",
-                        },
-
-                        "& .MuiSlider-rail": {
-                            height: 5,
-                        },
-
-                        "& .MuiSlider-thumb": {
-                            width: 18,
-                            height: 18,
-                            backgroundColor: "#fff",
-                        },
-                        "& .MuiSlider-mark": {
-                            width: 2,
-                            height: 14,
-                            backgroundColor: "#ffffff",
-                            marginTop: "-4px",
-                        },
-                        "& .MuiSlider-markActive": {
-                            backgroundColor: "#ffffff",
-                        },
-                        "& .MuiSlider-markLabel": {
-                            fontSize: 13,
-                            fontWeight: 500,
-                        },
-                    }}
+                    sx={{ color: "var(--ds-primary-color)" }}
                 />
             </Box>
             <Box sx={{ display: "flex", justifyContent: "space-around", width: "100%" }}>

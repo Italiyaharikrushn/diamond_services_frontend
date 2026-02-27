@@ -1,19 +1,37 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Slider } from '@mui/material';
 import FilterAccordion from './FilterAccordion';
 
-const ClarityFilter = () => {
-    const clarity = ["J", "I", "H", "G", "F", "E", "D"];
-    const [value, setValue] = useState([1, clarity.length + 1]);
+const ClarityFilter = ({ config, onChange, value = [] }) => {
+    const clarity = config?.values || [];
+    const [range, setRange] = useState([1, clarity.length]);
 
-    const handleChange = (event, newValue) => {
-        if (!Array.isArray(newValue)) return;
+    useEffect(() => {
+        if (!clarity.length) return;
 
-        const minDistance = 1;
-
-        if (newValue[1] - newValue[0] >= minDistance) {
-            setValue(newValue);
+        if (!value.length) {
+            setRange([1, clarity.length]);
+            return;
         }
+
+        const start = clarity.indexOf(value[0]) + 1;
+        const end = clarity.indexOf(value[value.length - 1]) + 1;
+
+        if (start > 0 && end > 0) {
+            setRange([start, end]);
+        }
+    }, [value, clarity]);
+
+
+    const handleChange = (_, newRange) => {
+        setRange(newRange);
+
+        const selectedClarity = clarity.slice(
+            newRange[0] - 1,
+            newRange[1]
+        );
+
+        onChange(selectedClarity);
     };
 
     return (
@@ -21,46 +39,15 @@ const ClarityFilter = () => {
         <FilterAccordion title="Clarity">
             <Box sx={{ padding: "0px 8px" }}>
                 <Slider
-                    defaultValue={[0, clarity.length + 1]}
-                    shiftStep={30}
+                    value={range}
+                    onChange={handleChange}
+                    min={1}
+                    max={clarity.length}
                     step={1}
                     marks
-                    value={value}
-                    onChange={handleChange}
-                    disableSwap
-                    min={1}
-                    max={clarity.length + 1}
-                    sx={{
-                        color: "var(--ds-primary-color)",
-
-                        "& .MuiSlider-track": {
-                            height: 5,
-                            border: "none",
-                        },
-
-                        "& .MuiSlider-rail": {
-                            height: 5,
-                        },
-
-                        "& .MuiSlider-thumb": {
-                            width: 18,
-                            height: 18,
-                            backgroundColor: "#fff",
-                        },
-                        "& .MuiSlider-mark": {
-                            width: 2,
-                            height: 14,
-                            backgroundColor: "#ffffff",
-                            marginTop: "-4px",
-                        },
-                        "& .MuiSlider-markActive": {
-                            backgroundColor: "#ffffff",
-                        },
-                        "& .MuiSlider-markLabel": {
-                            fontSize: 13,
-                            fontWeight: 500,
-                        },
-                    }}
+                    defaultValue={[0, clarity.length + 1]}
+                    shiftStep={30}
+                    sx={{ color: "var(--ds-primary-color)" }}
                 />
             </Box>
             <Box sx={{ display: "flex", justifyContent: "space-around", width: "100%" }}>

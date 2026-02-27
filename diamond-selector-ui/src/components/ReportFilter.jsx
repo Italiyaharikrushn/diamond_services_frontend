@@ -2,21 +2,19 @@ import React, { useState } from "react";
 import { Box, Button } from "@mui/material";
 import FilterAccordion from "./FilterAccordion";
 
-function ReportFilter({ onChange }) {
-    const report = ["IGI", "IGA", "SGL", "GII"];
-    const [selectedReports, setSelectedReports] = useState([]);
+function ReportFilter({ config, onChange, value = [] }) {
+    const report = config?.values || [];
 
-    const handleSelect = (value) => {
-        const isAlreadySelected = selectedReports.includes(value);
-
+    const handleSelect = (item) => {
         let updatedSelection;
-        if (isAlreadySelected) {
-            updatedSelection = selectedReports.filter((item) => item !== value);
+
+        if (value.includes(item)) {
+            updatedSelection = value.filter(v => v !== item);
         } else {
-            updatedSelection = [...selectedReports, value];
+            updatedSelection = [...value, item];
         }
-        setSelectedReports(updatedSelection);
-        if (onChange) onChange(updatedSelection);
+
+        onChange && onChange(updatedSelection);
     };
 
     return (
@@ -40,7 +38,7 @@ function ReportFilter({ onChange }) {
                 }}
             >
                 {report.map((item) => {
-                    const isActive = selectedReports.includes(item);
+                    const isActive = value.includes(item);
 
                     return (
                         <Button

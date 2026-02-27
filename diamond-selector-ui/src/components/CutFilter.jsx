@@ -1,17 +1,36 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Slider } from '@mui/material';
 import FilterAccordion from './FilterAccordion';
 
-function CutFilter() {
-    const cut = ["J", "I", "H", "G", "F", "E", "D"];
-    const [value, setValue] = useState([1, cut.length + 1]);
+function CutFilter({ config, onChange, value = [] }) {
+    const cut = config?.values || [];
+    const [range, setRange] = useState([1, cut.length]);
 
-    const handleChange = (event, newValue) => {
-        if (!Array.isArray(newValue)) return;
+    useEffect(() => {
+        if (!cut.length) return;
 
-        const minDistance = 1;
+        if (!value.length) {
+            setRange([1, cut.length]);
+            return;
+        }
 
-        if (newValue[1] - newValue[0] >= minDistance) return setValue(newValue);
+        const start = cut.indexOf(value[0]) + 1;
+        const end = cut.indexOf(value[value.length - 1]) + 1;
+
+        if (start > 0 && end > 0) {
+            setRange([start, end]);
+        }
+    }, [value, cut]);
+
+    const handleChange = (_, newRange) => {
+        setRange(newRange);
+
+        const selectedCut = cut.slice(
+            newRange[0] - 1,
+            newRange[1]
+        );
+
+        onChange(selectedCut);
     };
 
     return (
@@ -19,46 +38,15 @@ function CutFilter() {
         <FilterAccordion title="Cut">
             <Box sx={{ padding: "0px 8px" }}>
                 <Slider
-                    defaultValue={[0, cut.length + 1]}
+                    value={range}
+                    onChange={handleChange}
+                    min={1}
+                    max={cut.length}
                     shiftStep={30}
                     step={1}
                     marks
-                    value={value}
-                    onChange={handleChange}
-                    disableSwap
-                    min={1}
-                    max={cut.length + 1}
-                    sx={{
-                        color: "var(--ds-primary-color)",
-
-                        "& .MuiSlider-track": {
-                            height: 5,
-                            border: "none",
-                        },
-
-                        "& .MuiSlider-rail": {
-                            height: 5,
-                        },
-
-                        "& .MuiSlider-thumb": {
-                            width: 18,
-                            height: 18,
-                            backgroundColor: "#fff",
-                        },
-                        "& .MuiSlider-mark": {
-                            width: 2,
-                            height: 14,
-                            backgroundColor: "#ffffff",
-                            marginTop: "-4px",
-                        },
-                        "& .MuiSlider-markActive": {
-                            backgroundColor: "#ffffff",
-                        },
-                        "& .MuiSlider-markLabel": {
-                            fontSize: 13,
-                            fontWeight: 500,
-                        },
-                    }}
+                    defaultValue={[0, cut.length + 1]}
+                    sx={{ color: "var(--ds-primary-color)" }}
                 />
             </Box>
             <Box sx={{ display: "flex", justifyContent: "space-around", width: "100%" }}>
