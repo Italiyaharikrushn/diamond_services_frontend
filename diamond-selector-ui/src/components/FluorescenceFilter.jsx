@@ -8,14 +8,11 @@ function FluorescenceFilter() {
 
     const handleChange = (event, newValue) => {
         if (!Array.isArray(newValue)) return;
-
         const minDistance = 1;
-
         if (newValue[1] - newValue[0] >= minDistance) return setValue(newValue);
     };
 
     return (
-
         <FilterAccordion title="Fluorescence">
             <Box sx={{ padding: "0px 8px" }}>
                 <Slider

@@ -17,11 +17,9 @@ const ClarityFilter = ({ config, onChange, value = [] }) => {
         const start = clarity.indexOf(value[0]) + 1;
         const end = clarity.indexOf(value[value.length - 1]) + 1;
 
-        if (start > 0 && end > 0) {
-            setRange([start, end]);
-        }
-    }, [value, clarity]);
+        if (start > 0 && end > 0) setRange([start, end]);
 
+    }, [value, clarity]);
 
     const handleChange = (_, newRange) => {
         setRange(newRange);
@@ -30,12 +28,10 @@ const ClarityFilter = ({ config, onChange, value = [] }) => {
             newRange[0] - 1,
             newRange[1]
         );
-
         onChange(selectedClarity);
     };
 
     return (
-
         <FilterAccordion title="Clarity">
             <Box sx={{ padding: "0px 8px" }}>
                 <Slider

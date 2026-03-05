@@ -4,7 +4,6 @@ import { Link, useLocation } from "react-router-dom";
 const Stepper = ({ steps, currentStep, completedSteps }) => {
     const { pathname } = useLocation();
 
-
     return (
         <div className="stepper-container">
             {steps.map((step, index) => {
@@ -28,8 +27,7 @@ const Stepper = ({ steps, currentStep, completedSteps }) => {
                     >
                         <div className="step-left">
                             <span
-                                className={`step-number ${isActive ? "active-text" : " inactive-text "
-                                    }`}
+                                className={`step-number ${isActive ? "active-text" : " inactive-text "}`}
                             >
                                 {stepNumber}
                             </span>
@@ -41,8 +39,7 @@ const Stepper = ({ steps, currentStep, completedSteps }) => {
                         </div>
 
                         <div
-                            className={`step-icon ${isActive ? "icon-active" : "icon-inactive"
-                                }`}
+                            className={`step-icon ${isActive ? "icon-active" : "icon-inactive"}`}
                         >
                             {step.icon}
                         </div>

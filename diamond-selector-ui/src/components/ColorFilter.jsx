@@ -17,9 +17,8 @@ const ColorFilter = ({ config, onChange, value = [] }) => {
         const start = colors.indexOf(value[0]) + 1;
         const end = colors.indexOf(value[value.length - 1]) + 1;
 
-        if (start > 0 && end > 0) {
-            setRange([start, end]);
-        }
+        if (start > 0 && end > 0) setRange([start, end]);
+
     }, [value, colors]);
 
     const handleChange = (_, newRange) => {

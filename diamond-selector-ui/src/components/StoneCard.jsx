@@ -13,10 +13,6 @@ const StoneCard = ({ item }) => {
         const shapeKey = item.shape?.toLowerCase();
         return ShapeImageMap[shapeKey];
     };
-
-    const handleError = (e) => {
-        e.target.src = getFallbackImage();
-    };
     const finalImage = getStoneImage();
 
     return (

@@ -9,9 +9,8 @@ const CaratFilter = ({ config, onChange, value }) => {
 
   const [localValue, setLocalValue] = useState(value || [minLimit, maxLimit]);
   useEffect(() => {
-    if (value) {
-      setLocalValue(value);
-    }
+    if (value) setLocalValue(value);
+
   }, [value]);
 
   return (

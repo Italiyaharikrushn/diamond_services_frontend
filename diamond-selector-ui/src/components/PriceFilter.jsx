@@ -25,9 +25,6 @@ const PriceFilter = ({ config, value, onChange }) => {
     onChange(newValue);
   };
 
-  const handleInputBlur = () => {
-    onChange(localValue);
-  };
   return (
     <FilterAccordion title={config?.label || "Price"}>
       <Box sx={{ padding: "0px 8px" }}>

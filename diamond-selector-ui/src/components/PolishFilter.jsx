@@ -30,12 +30,10 @@ function PolishFilter({ config, onChange, value = [] }) {
             newRange[0] - 1,
             newRange[1]
         );
-
         onChange(selectedPolish)
     };
 
     return (
-
         <FilterAccordion title="Polish">
             <Box sx={{ padding: "0px 8px" }}>
                 <Slider

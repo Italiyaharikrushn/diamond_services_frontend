@@ -17,9 +17,7 @@ function CutFilter({ config, onChange, value = [] }) {
         const start = cut.indexOf(value[0]) + 1;
         const end = cut.indexOf(value[value.length - 1]) + 1;
 
-        if (start > 0 && end > 0) {
-            setRange([start, end]);
-        }
+        if (start > 0 && end > 0) setRange([start, end]);
     }, [value, cut]);
 
     const handleChange = (_, newRange) => {

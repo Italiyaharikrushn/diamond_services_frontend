@@ -1,5 +1,5 @@
-import { Box, Pagination, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import { Box, Pagination, Typography } from "@mui/material";
 import "../styles/stones.css";
 import { useDiamonds } from "../hooks/useDiamonds";
 import { useGemstones } from "../hooks/useGemstones";
