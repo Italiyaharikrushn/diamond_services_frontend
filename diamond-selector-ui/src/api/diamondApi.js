@@ -28,7 +28,21 @@ export const diamondApi = createApi({
                 },
             }),
         }),
+
+        getPublicSingleDiamonds: builder.query({
+            query: (params) => ({
+                url: "/diamonds/public/get-diamond",
+                params: {
+                    store_id: params.storeId,
+                    id: params.id,
+                    stone_type: params.stone_type,
+                }
+            })
+        })
     }),
 });
 
-export const { useGetPublicDiamondsQuery } = diamondApi;
+export const {
+    useGetPublicDiamondsQuery,
+    useGetPublicSingleDiamondsQuery
+} = diamondApi;

@@ -1,31 +1,16 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Stepper from "./components/Stepper";
-import { getDisplaySteps, handleStepClickLogic } from "./utils/dashboardLogic";
 import { baseSteps } from "./components/step";
 import { Container } from "@mui/material";
 import { useSettings } from "./hooks/useSettings";
 import Loader from "./components/Loader";
 
 const Layout = () => {
-    const [isSwapped, setIsSwapped] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
-    // const displaySteps = getDisplaySteps(baseSteps, isSwapped);
     const [completedSteps] = useState([]);
     const storeId = "test-store.myshopify.com";
     const { settings, isLoading } = useSettings(storeId)
-
-    // const handleStepClick = (stepNumber) => {
-    //     handleStepClickLogic({
-    //         stepNumber,
-    //         currentStep,
-    //         completedSteps,
-    //         // displaySteps,
-    //         isSwapped,
-    //         setCurrentStep,Stone Origin
-    //         setIsSwapped,
-    //     });
-    // };
 
     return isLoading ? <Loader /> : (
         <div>

@@ -28,7 +28,21 @@ export const gemstoneApi = createApi({
                 },
             }),
         }),
+
+        getPublicSingleGemstones: builder.query({
+            query: (params) => ({
+                url: "/gemstones/public/get-gemstone",
+                params: {
+                    store_id: params.storeId,
+                    id: params.id,
+                    stone_type: params.stone_type,
+                }
+            })
+        })
     }),
 });
 
-export const { useGetPublicGemstonesQuery } = gemstoneApi;
+export const { 
+    useGetPublicGemstonesQuery,
+    useGetPublicSingleGemstonesQuery,
+ } = gemstoneApi;

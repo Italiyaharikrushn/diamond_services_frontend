@@ -14,8 +14,9 @@ function App() {
             <Route path="/stones" element={<Stones />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/complete-ring" element={<CompleteRing />} />
-            
+
             <Route path="/diamond/:id" element={<DiamondDetails />} />
+            <Route path="/gemstone/:id" element={<DiamondDetails />} />
           </Route>
         </Routes>
       </Router>

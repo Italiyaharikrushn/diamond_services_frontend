@@ -8,22 +8,12 @@ const Stepper = ({ steps, currentStep, completedSteps }) => {
         <div className="stepper-container">
             {steps.map((step, index) => {
                 const stepNumber = index + 1;
-                // const isActive = currentStep === stepNumber;
-                // const isDone = completedSteps.includes(stepNumber);
-                // const isLocked =
-                //     stepNumber === 3 &&
-                //     (!completedSteps.includes(1) || !completedSteps.includes(2));
-
                 const isActive = pathname.includes(step.link)
 
                 return (
-                    // <div
-                    // >
                     <Link to={step.link}
                         key={stepNumber}
                         className={`stepper-item ${isActive ? "active-step" : ""}`}
-                    // onClick={() => onStepClick(stepNumber)}
-                    // style={{ cursor: "pointer", opacity: isLocked ? 0.5 : 1 }}
                     >
                         <div className="step-left">
                             <span
@@ -44,7 +34,6 @@ const Stepper = ({ steps, currentStep, completedSteps }) => {
                             {step.icon}
                         </div>
                     </Link>
-                    // </div>
                 );
             })}
         </div >
