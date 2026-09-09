@@ -4,6 +4,7 @@ import { Box, Grid, Typography, Button } from "@mui/material";
 import { useSingleDiamond } from "../hooks/useSingleDiamond";
 import { useSingleGemstone } from "../hooks/useSingleGemstone";
 import { useSearchParams } from "react-router-dom";
+import FeatureIcons from "../components/FeatureIcons";
 
 const DiamondDetails = () => {
     const storeId = "test-store.myshopify.com";
@@ -18,10 +19,7 @@ const DiamondDetails = () => {
     const loading = isGemstone ? gLoading : dLoading;
 
     const icons = {
-        shipping: "../ring-builder/ring-builder-ui/assets/features/shipping.svg",
         diamond: "../ring-builder/ring-builder-ui/assets/features/diamond.svg",
-        resize: "../ring-builder/ring-builder-ui/assets/features/resize-ring.svg",
-        warranty: "../ring-builder/ring-builder-ui/assets/features/warranty.svg"
     };
 
     if (loading) return <Typography>Loading...</Typography>;
@@ -132,44 +130,7 @@ const DiamondDetails = () => {
                         </Button>
                     </Box>
 
-                    <Box>
-                        <Typography sx={{ mt: 1, color: "var(--ds-color)" }}>
-                            We’ve Got You Covered
-                        </Typography>
-                    </Box>
-
-                    <Box sx={{ mt: 2 }}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={6} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                                <img src={icons.shipping} width="45" alt="shipping" />
-                                <Typography sx={{ color: "var(--ds-color)" }}>
-                                    Free Shipping & Returns
-                                </Typography>
-                            </Grid>
-
-                            <Grid item xs={6} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                                <img src={icons.resize} width="50" alt="shipping" />
-                                <Typography sx={{ color: "var(--ds-color)" }}>
-                                    Free Lifetime Warranty
-                                </Typography>
-                            </Grid>
-
-                            <Grid item xs={6} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                                <img src={icons.diamond} width="40" alt="shipping" />
-                                <Typography sx={{ color: "var(--ds-color)" }}>
-                                    Lifetime Diamond Upgrade
-                                </Typography>
-                            </Grid>
-
-                            <Grid item xs={6} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                                <img src={icons.warranty} width="38" alt="shipping" />
-                                <Typography sx={{ color: "var(--ds-color)" }}>
-                                    Free 1-Year Resizing
-                                </Typography>
-                            </Grid>
-
-                        </Grid>
-                    </Box>
+                    <FeatureIcons />
 
                     <Box
                         sx={{

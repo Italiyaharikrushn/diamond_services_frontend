@@ -16,7 +16,6 @@ const ShapeSlider = ({ stoneOrigin, onChange }) => {
     const currentFilters = isGemstone ? gemstoneTypes : diamondShapes;
 
     const gemstoneShapes = settings?.gemstone?.shapes || [];
-    console.log("-----------------------", gemstoneShapes)
 
     const { scrollRef, showButtons, scroll } = useSlider([currentFilters, stoneOrigin]);
 

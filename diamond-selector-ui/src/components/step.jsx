@@ -24,5 +24,5 @@ export const ringIcon = (
 export const baseSteps = [
     { id: 1, title: "Select Diamond", subtitle: "Choose Your Diamond", icon: diamondIcon, link: "/stones" },
     { id: 2, title: "Select Setting", subtitle: "Choose Your Setting", icon: settingIcon, link: "/settings" },
-    { id: 3, title: "Complete Ring", subtitle: "Review Your Design", icon: ringIcon, link: "/complete-ring" },
+    { id: 3, title: "Complete Ring", subtitle: "Complete Your Ring", icon: ringIcon, link: "/complete-ring" },
 ];
